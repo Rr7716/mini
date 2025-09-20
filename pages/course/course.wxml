@@ -1,0 +1,71 @@
+<view class="container">
+  <view class="content">
+    <view class="header">
+      <text>名称</text>
+      <text>时间</text>
+      <text class="price">价格</text>
+      <text class="lastCol">学生</text>
+    </view>
+    <view class="header dataRow" wx:for-index="row_num" wx:for-item="one_row" wx:for="{{courses}}">
+      <text>
+        {{one_row.Content}}
+      </text>
+      <text>
+        {{one_row.time}}
+      </text>
+      <text class="price">
+        {{one_row.fee.price}}
+      </text>
+      <text class="lastCol">
+        {{one_row.students}}
+      </text>
+    </view>
+  </view>
+
+  <button bind:tap="OnClickAdd">添加</button>
+
+  <!-- 遮罩层 -->
+  <view class="mask" wx:if="{{showPopup}}" bindtap="closePopup"></view>
+
+  <!-- 弹窗 -->
+  <view class="popup" wx:if="{{showPopup}}">
+    <view class="popup-content">
+      <text>名称</text>
+      <input class="input" placeholder="请输入名称" value="{{name}}" bindinput="onInputName" />
+      <text>时间</text>
+      <picker mode="selector" range="{{weekdayList}}" value="{{selectedWeekday}}" bindchange="bindPickerChange">
+        <view class="picker">
+          {{weekdayList[selectedWeekday]}}
+        </view>
+      </picker>
+      <picker mode="selector" range="{{timeRange}}" value="{{selectedWeekday}}" bindchange="bindPickerChange2">
+        <view class="picker">
+          {{timeRange[selectedWeekday]}}
+        </view>
+      </picker>
+      <text>价格</text>
+      <input class="input" placeholder="请输入价格" type="number" value="{{price}}" bindinput="onInputPrice" />
+      <text>学生</text>
+      <view class="dropdown">
+        <view class="dropdown-title" bindtap="toggleDropdown">
+          {{ selectedText || '请选择' }}
+        </view>
+        <view class="dropdown-list" wx:if="{{ showDropdown }}">
+          <checkbox-group bindchange="onCheckboxChange">
+            <block wx:for="{{ options }}" wx:key="index">
+              <label class="checkbox-item">
+                <checkbox value="{{item.value}}" checked="{{item.checked}}" /> {{item.label}}
+              </label>
+            </block>
+          </checkbox-group>
+        </view>
+      </view>
+
+
+      <view class="popup-btns">
+        <button bindtap="closePopup">取消</button>
+        <button bindtap="submitInfo">提交</button>
+      </view>
+    </view>
+  </view>
+</view>

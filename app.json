@@ -1,0 +1,43 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/fee/fee",
+    "pages/course/course",
+    "pages/student/student"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationStyle": "custom"
+  },
+  "tabBar": {
+    "selectedColor": "#b4282d",
+    "position": "bottom",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/home.png",
+        "selectedIconPath": "images/home2.png"
+      },
+      {
+        "pagePath": "pages/fee/fee",
+        "text": "课时费",
+        "iconPath": "images/fee.png",
+        "selectedIconPath": "images/fee2.png"
+      },
+      {
+        "pagePath": "pages/course/course",
+        "text": "课程",
+        "iconPath": "images/course.png",
+        "selectedIconPath": "images/course2.png"
+      },
+      {
+        "pagePath": "pages/student/student",
+        "text": "学生",
+        "iconPath": "images/student.png",
+        "selectedIconPath": "images/student2.png"
+      }
+    ]
+  },
+  "style": "v2"
+}
