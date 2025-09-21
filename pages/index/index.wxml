@@ -8,13 +8,13 @@
       {{headers[headers.length-1]}}
     </view>
   </view>
-  <view class="header">
-    <view wx:for-index='col_num' wx:for-item='each' wx:if="{{col_num!=headers.length-1}}" wx:for="{{headers}}">
+  <view class="header" wx:for-index='row_num' wx:for-item='one_row' wx:for="{{courseTable}}">
+    <view class="course" wx:for-index='col_num' wx:for-item='each' wx:for="{{one_row}}" wx:if="{{col_num!=headers.length-1}}">
       {{each}}
     </view>
     <!-- 最后一列单独显示 -->
     <view class="last_col">
-      {{headers[headers.length-1]}}
+      {{one_row[one_row.length-1]}}
     </view>
   </view>
 </view>

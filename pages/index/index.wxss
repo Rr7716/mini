@@ -1,5 +1,5 @@
 .course_container {
-  margin: 200rpx 20rpx 0rpx 20rpx;
+  margin: 200rpx 10rpx 0rpx 10rpx;
 }
 
 .header {
@@ -12,7 +12,8 @@
 }
 
 .header>view {
-  flex: 1;
+  height: 100rpx;
+  width: 90rpx;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -20,3 +21,6 @@
   border-left: 1rpx solid black;
 }
 
+.course {
+  font-size: 25rpx;
+}

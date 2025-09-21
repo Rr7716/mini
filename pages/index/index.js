@@ -14,7 +14,7 @@ Page({
       title: '加载中...',
       mask: true // 不能再点击请求按钮, 防止请求多次
     })
-    let courseTale = {} // key为coure_time_id, value为['07:00-08:00', '', '', '', '', '', '', '']
+    let courseTable = {} // key为coure_time_id, value为['07:00-08:00', '', '', '', '', '', '', '']
     // 请求课程时间
     wx.request({
       url: `${utils.baseUrl}/course_time/`,
@@ -24,9 +24,9 @@ Page({
       success: (res) => {
         console.log(res.data)
         for (let one of res.data) {
-          courseTale[one.id] = [`${one.start_time}-${one.end_time}`, '', '', '', '', '', '', '']
+          courseTable[one.id] = [`${one.start_time}-${one.end_time}`, '', '', '', '', '', '', '']
         }
-        console.log(courseTale)
+        console.log(courseTable)
       },
       fail: (error) => {},
       complete: (res) => {
@@ -41,16 +41,17 @@ Page({
       success: (res) => {
         console.log(res.data)
         for (let course of res.data) {
-          courseTale[course.course_time_id][course.weekday] = course.content
+          courseTable[course.course_time_id][course.weekday] = course.content
         }
         this.setData({
-          courseTimeDic: courseTale
-        })
-        courseTale = Object.values(courseTale) // 字典转数组, 不要key的id了
-        console.log(utils.sortTimeRanges(courseTale)) // 按照时间段排序
+          courseTimeDic: courseTable
+        });
+        courseTable = Object.values(courseTable) // 字典转数组, 不要key的id了
+        console.log(utils.sortTimeRanges(courseTable)) // 按照时间段排序
         this.setData({
           courseTable
         })
+        console.log(courseTable)
         // 3. 拼接学生名字
         // for (let one_row of res.data) {
         //   one_row.students = one_row.students.map(item => item.cn_name).join(" ");
