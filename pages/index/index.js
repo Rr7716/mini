@@ -7,6 +7,8 @@ Page({
       // ['07:00-08:00', '', '', '', '', '', '', '']
     ],
     courseTimeDic: {}, // key
+    selected: { row: -1, col: -1 }, // 选中的行号、列号
+    fatherActive: false,
   },
 
   onLoad(options) {
@@ -68,5 +70,14 @@ Page({
         wx.hideLoading()
       }
     })
-  }
+  },
+
+  selectCell(e) {
+    const { row, col } = e.currentTarget.dataset
+    console.log(e.currentTarget.dataset)
+    this.setData({
+      selected: { row, col },
+      fatherActive: !this.fatherActive
+    })
+  },
 })

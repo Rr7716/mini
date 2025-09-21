@@ -10,7 +10,8 @@
   </view>
   <view class="header" wx:for-index='row_num' wx:for-item='one_row' wx:for="{{courseTable}}" wx:if="{{row_num!=courseTable.length-1}}">
     <view class="block" wx:for-index='col_num' wx:for-item='each' wx:for="{{one_row}}" wx:if="{{col_num!=headers.length-1}}">
-      <view class="course_content">
+      <view class="course_content {{selected.row === row_num && selected.col === col_num ? 'active' : ''}}" bindtap="selectCell" data-row="{{row_num}}"
+          data-col="{{col_num}}">
         {{each}}
       </view>
     </view>
@@ -22,7 +23,8 @@
   <!-- 最后一行单独显示 -->
   <view class="header lastRow">
     <view class="block" wx:for-index='col_num' wx:for-item='each' wx:for="{{courseTable[courseTable.length-1]}}" wx:if="{{col_num!=headers.length-1}}">
-      <view class="course_content">
+      <view class="course_content {{selected.row === courseTable.length-1 && selected.col === col_num ? 'active' : ''}}" bindtap="selectCell" data-row="{{courseTable.length-1}}"
+          data-col="{{col_num}}">
         {{each}}
       </view>
     </view>

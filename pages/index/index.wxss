@@ -12,7 +12,7 @@
 }
 
 .block {
-  height: 100rpx;
+  height: 90rpx;
   width: 90rpx;
   display: flex;
   justify-content: center;
@@ -23,6 +23,9 @@
 
 /* 其实本来已经居中显示了, 但因为英文字母太长, 看起来不像居中, 所以在最里面再加一个view, 利用padding来让视觉效果上看是居中的 */
 .course_content {
+  height: 90rpx;
+  width: 90rpx;
+  padding-top: 8rpx;
   padding-left: 8rpx;
   padding-right: 8rpx;
   font-size: 25rpx;
@@ -30,4 +33,9 @@
 
 .lastRow {
   border-bottom: 1rpx solid black;
+}
+
+.active {
+  background-color: #4caf50; /* 高亮颜色 */
+  color: white;
 }
