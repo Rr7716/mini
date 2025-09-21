@@ -1,6 +1,11 @@
 <view class="course_container">
   <view class="course_top"></view>
   <view class="course_main">
+    <view class="show_total">
+      <view>当日课时：{{selectedWeekday.sumHours}}</view>
+      <view>当日课时费：{{selectedWeekday.sumPrice}}</view>
+    </view>
+    <!-- 显示周一到周日 -->
     <view class="header">
       <view class="block" wx:for-index='col_num' wx:for-item='each' wx:if="{{col_num!=lastColIndex}}" wx:for="{{headers}}">
         {{each}}
@@ -44,11 +49,13 @@
         {{courseTable[lastRowIndex][lastColIndex].content}}
       </view>
     </view>
+
+    <van-button type="primary" bind:tap="onClick">主要按钮</van-button>
   </view>
   <view class="course_footer" wx:if="{{footerActive}}">
     <view>
-      <view>当日课时：{{selectedWeekday.sumHours}}</view>
-      <view>当日课时费：{{selectedWeekday.sumPrice}}</view>
+      <view>人数：</view>
+      <input class="course_input" type="number" value="{{selectedCourse.students.length}}" bindinput="onInputPrice" />
     </view>
     <view>人数：{{selectedCourse.students.length}}</view>
     <view>学生：{{selectedCourse.studentNames}}</view>
@@ -57,4 +64,15 @@
     <view>课时费(总价)：{{selectedCourse.totalCost}}</view>
     <view>课时剩余：{{selectedCourse.course_left}}</view>
   </view>
+
+  <van-popup closeable close-icon="close" show="{{ show }}" position="bottom" custom-style="height: 40%;" bind:close="onClose">
+    <view style="padding: 40rpx;">
+      <van-field label="人数" placeholder="请输入人数" value="{{selectedCourse.students.length}}" />
+      <van-field label="学生" value="{{selectedCourse.studentNames}}" />
+      <van-field label="课时费(每小时)" placeholder="请输入课时费" value="{{selectedCourse.per_hour_cost}}" />
+      <van-field label="课时费(单价)" placeholder="请输入课时费" value="{{selectedCourse.price}}" />
+      <van-field label="课时费(总价)" placeholder="请输入课时费" value="{{selectedCourse.totalCost}}" />
+      <van-field label="剩余课时" placeholder="请输入剩余课时" value="{{selectedCourse.course_left}}" />
+    </view>
+  </van-popup>
 </view>

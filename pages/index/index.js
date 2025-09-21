@@ -16,6 +16,7 @@ Page({
       sumPrice: 0,
       sumHours: 0,
     },
+    show: false,
   },
 
   onLoad(options) {
@@ -92,5 +93,19 @@ Page({
         sumHours,
       }
     })
+    this.setData({
+      show: true,
+    })
   },
+
+  onClick(e) {
+    this.setData({
+      show: true,
+    })
+  },
+  onClose(e) {
+    this.setData({
+      show: false,
+    })
+  }
 })

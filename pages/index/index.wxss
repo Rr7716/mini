@@ -5,7 +5,7 @@
   flex-direction: column;
 }
 .course_top {
-  height: 200rpx;
+  height: 70rpx;
   width: 100vw;
 }
 .course_main {
@@ -13,7 +13,10 @@
   overflow: auto;
   margin-left: 10rpx;
 }
-
+.show_total{
+  font-size: 28rpx;
+  margin-bottom: 20rpx;
+}
 .header {
   display: flex;
   flex-direction: row;
@@ -50,4 +53,8 @@
 .active {
   background-color: #4caf50; /* 高亮颜色 */
   color: white;
+}
+
+.course_input {
+  border: 1rpx solid black;
 }

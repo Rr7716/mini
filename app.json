@@ -1,4 +1,10 @@
 {
+  "usingComponents": {
+    "van-icon": "@vant/weapp/icon/index",
+    "van-popup": "@vant/weapp/popup/index",
+    "van-field": "@vant/weapp/field/index",
+    "van-button": "@vant/weapp/button/index"
+  },
   "pages": [
     "pages/index/index",
     "pages/fee/fee",
@@ -38,6 +44,5 @@
         "selectedIconPath": "images/student2.png"
       }
     ]
-  },
-  "style": "v2"
+  }
 }
