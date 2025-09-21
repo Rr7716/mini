@@ -1,27 +1,22 @@
-.header_container {
+.course_container {
   margin: 200rpx 20rpx 0rpx 20rpx;
 }
 
 .header {
   display: flex;
   flex-direction: row;
-  align-items: center;
   flex-wrap: wrap;
-  border-top: 1rpx solid black;
-  border-bottom: 1rpx solid black;
 }
 .last_col {
   border-right: 1rpx solid black;
 }
 
 .header>view {
-  font-size: 40rpx;
-  height: 60rpx;
-  /* width: 80rpx; */
-  flex:1;
-  border-left: 1rpx solid black;
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
+  border-top: 1rpx solid black;
+  border-left: 1rpx solid black;
 }
 

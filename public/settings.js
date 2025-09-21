@@ -51,13 +51,12 @@ function timeSort(data) {
 }
 
 function parseTimeToMinutes(timeStr) {
-  // 例如 "08:00-09:00"
-  const range = timeStr.split('-');
-  const start = range[0];
-  const hm = start.split(':');
-  const h = parseInt(hm[0], 10);
-  const m = parseInt(hm[1], 10);
-  return h * 60 + m;
+  if (!timeStr || typeof timeStr !== "string") {
+    return 0; // 没有 time 就返回 0，保证不报错
+  }
+  let start = timeStr.split('-')[0];  // 取开始时间 "08:00"
+  let [hour, minute] = start.split(':').map(Number);
+  return hour * 60 + minute;
 }
 
 function timeSort2(data) {
@@ -67,10 +66,37 @@ function timeSort2(data) {
   return data
 }
 
+// 工具函数：把 "08:00" 转成分钟
+function parseTimeToMinutes2(timeStr) {
+  let [h, m] = timeStr.split(":").map(Number);
+  return h * 60 + m;
+}
+
+// 排序函数
+function sortTimeRanges(arr) {
+  return arr.sort((a, b) => {
+    let [aStart, aEnd] = a[0].split("-");
+    let [bStart, bEnd] = b[0].split("-");
+
+    let aStartMin = parseTimeToMinutes2(aStart);
+    let bStartMin = parseTimeToMinutes2(bStart);
+
+    if (aStartMin !== bStartMin) {
+      return aStartMin - bStartMin; // 先比较开始时间
+    }
+
+    // 如果开始时间相同，再比较结束时间
+    let aEndMin = parseTimeToMinutes2(aEnd);
+    let bEndMin = parseTimeToMinutes2(bEnd);
+    return aEndMin - bEndMin;
+  });
+}
+
 module.exports = {
   baseUrl,
   weekday,
   timeSort,
   weekMap,
   timeSort2,
+  sortTimeRanges,
 }

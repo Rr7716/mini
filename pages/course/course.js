@@ -3,17 +3,21 @@ const utils = require("../../public/settings.js")
 Page({
   data: {
     courses: [],
+    students: {}, // key为学生id, value为学生对象
     showPopup: true, // 弹窗
     name: '',
-    price: '',
-    weekdayList: Object.keys(utils.weekMap), // 星期下拉框选项
+    price: 100,
+
+    weekdayOptions: Object.keys(utils.weekMap), // 星期下拉框选项
     selectedWeekday: 0,  // 星期下拉框索引
-    timeRange: [], // 时间段下拉框选项
+
+    timeRangeOptions: [], // 时间段下拉框选项
     selectedTimeRange: 0, // 时间段下拉框索引
+
     showDropdown: false, // 学生下拉多选框
+    studentsOptions: [],
     selectedText: '', // 学生下拉多选框选中的文本显示
     selectedStudentsId: [], // 学生下拉多选框选中的学生id
-    students: [],
   },
 
   onLoad(options) {
@@ -66,7 +70,7 @@ Page({
         }
         tmp = utils.timeSort2(tmp)
         this.setData({
-          timeRange: tmp
+          timeRangeOptions: tmp
         })
       },
       fail: (error) => {
@@ -83,16 +87,20 @@ Page({
       header: {},
       success: (res) => {
         console.log(res.data)
-        let arr = []
+        let students = {}
+        let studentsOptions = []
         res.data.forEach((student, _) => {
-          arr = [...arr, {
+          studentsOptions = [...studentsOptions, {
             'value': student.id,
             'label': student.cn_name,
             'checked': false
           }]
+          students[student.id] = student
         })
+        console.log(students)
         this.setData({
-          students: arr
+          studentsOptions,
+          students
         })
       },
       fail: (error) => {
@@ -121,12 +129,47 @@ Page({
   },
 
   submitInfo() {
-    console.log('提交信息:', this.data.name, this.data.phone);
-    wx.showToast({
-      title: '提交成功',
-      icon: 'success'
-    });
-    this.closePopup();
+    // 通过id将字典转化数组
+    let studentsArr = this.data.selectedStudentsId.map(id => this.data.students[id])
+    // 删除掉id字段
+    studentsArr = studentsArr.map(({ cn_name, en_name, age }) => ({ cn_name, en_name, age }));
+    let req = {
+      "students": studentsArr,
+      "price": this.data.price,
+      "weekday": +this.data.selectedWeekday + 1,
+      "course_time": {
+        "start_time": this.data.timeRangeOptions[this.data.selectedTimeRange].split('-')[0],
+        "end_time": this.data.timeRangeOptions[this.data.selectedTimeRange].split('-')[1],
+      },
+      "Content": this.data.name,
+    }
+    console.log('提交信息:', req);
+    wx.showLoading({
+      title: '加载中...',
+      mask: true // 不能再点击请求按钮, 防止请求多次
+    })
+    // 请求课程内容
+    wx.request({
+      url: `${utils.baseUrl}/course/`,
+      method: 'POST',
+      data: req,
+      header: {
+        "Content-Type": "application/json" // 一般用 application/json
+      },
+      success: (res) => {
+        wx.showToast({
+          title: '提交成功',
+          icon: 'success'
+        });
+        this.closePopup();
+      },
+      fail: (error) => {
+
+      },
+      complete: (res) => {
+        wx.hideLoading()
+      }
+    })
   },
 
   bindPickerChange(e) {
@@ -148,22 +191,21 @@ Page({
 
   onCheckboxChange(e) {
     const values = e.detail.value; // 选中的值数组
-    // 在这里students为更新前的值, 新的选中后, newOptions要去替换students
-    const newOptions = this.data.students.map(item => ({
+    const studentsOptions = this.data.studentsOptions.map(item => ({
       ...item,
       checked: values.includes(item.value) // 在这里去修改checked的值
     }));
-    const selectedText = newOptions
+    const selectedText = studentsOptions
       .filter(item => item.checked)
       .map(item => item.label)
       .join(', ');
     // 选中的学生id数组
-    const selectedStudentsId = newOptions
+    const selectedStudentsId = studentsOptions
       .filter(item => item.checked)
       .map(item => item.value)
 
     this.setData({
-      students: newOptions,
+      studentsOptions,
       selectedText,
       selectedStudentsId,
     });

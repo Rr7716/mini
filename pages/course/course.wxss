@@ -104,3 +104,8 @@
   display: block;
   padding: 5px 10px;
 }
+
+.btn_submit {
+  background: #07c160; /* 微信绿 */
+  color: #fff;
+}

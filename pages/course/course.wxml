@@ -14,7 +14,7 @@
         {{one_row.time}}
       </text>
       <text class="price">
-        {{one_row.fee.price}}
+        {{one_row.price}}
       </text>
       <text class="lastCol">
         {{one_row.students}}
@@ -33,17 +33,17 @@
       <text>名称</text>
       <input class="input" placeholder="请输入名称" value="{{name}}" bindinput="onInputName" />
       <text>时间</text>
-      <picker mode="selector" range="{{weekdayList}}" value="{{selectedWeekday}}" bindchange="bindPickerChange">
+      <picker mode="selector" range="{{weekdayOptions}}" value="{{selectedWeekday}}" bindchange="bindPickerChange">
         <view class="picker">
-          {{weekdayList[selectedWeekday]}}
+          {{weekdayOptions[selectedWeekday]}}
         </view>
       </picker>
-      <picker mode="selector" range="{{timeRange}}" value="{{selectedWeekday}}" bindchange="bindPickerChange2">
+      <picker mode="selector" range="{{timeRangeOptions}}" value="{{selectedTimeRange}}" bindchange="bindPickerChange2">
         <view class="picker">
-          {{timeRange[selectedWeekday]}}
+          {{timeRangeOptions[selectedTimeRange]}}
         </view>
       </picker>
-      <text>价格</text>
+      <text>价格(每小时)</text>
       <input class="input" placeholder="请输入价格" type="number" value="{{price}}" bindinput="onInputPrice" />
       <text>学生</text>
       <view class="dropdown">
@@ -52,7 +52,7 @@
         </view>
         <view class="dropdown-list" wx:if="{{ showDropdown }}">
           <checkbox-group bindchange="onCheckboxChange">
-            <block wx:for="{{ students }}" wx:key="index">
+            <block wx:for="{{ studentsOptions }}" wx:key="index">
               <label class="checkbox-item">
                 <checkbox value="{{item.value}}" checked="{{item.checked}}" /> {{item.label}}
               </label>
@@ -64,7 +64,7 @@
 
       <view class="popup-btns">
         <button bindtap="closePopup">取消</button>
-        <button bindtap="submitInfo">提交</button>
+        <button class="btn_submit" bindtap="submitInfo">提交</button>
       </view>
     </view>
   </view>

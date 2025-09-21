@@ -1,4 +1,13 @@
-<view class="header_container">
+<view class="course_container">
+  <view class="header">
+    <view wx:for-index='col_num' wx:for-item='each' wx:if="{{col_num!=headers.length-1}}" wx:for="{{headers}}">
+      {{each}}
+    </view>
+    <!-- 最后一列单独显示 -->
+    <view class="last_col">
+      {{headers[headers.length-1]}}
+    </view>
+  </view>
   <view class="header">
     <view wx:for-index='col_num' wx:for-item='each' wx:if="{{col_num!=headers.length-1}}" wx:for="{{headers}}">
       {{each}}
