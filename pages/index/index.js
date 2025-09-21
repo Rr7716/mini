@@ -6,9 +6,11 @@ Page({
     courseTable: [
       // ['07:00-08:00', '', '', '', '', '', '', '']
     ],
+    lastRowIndex: 0,
+    lastColIndex: 7,
     courseTimeDic: {}, // key
     selected: { row: -1, col: -1 }, // 选中的行号、列号
-    fatherActive: false,
+    footerActive: false,
   },
 
   onLoad(options) {
@@ -51,7 +53,8 @@ Page({
         courseTable = Object.values(courseTable) // 字典转数组, 不要key的id了
         console.log(utils.sortTimeRanges(courseTable)) // 按照时间段排序
         this.setData({
-          courseTable
+          courseTable,
+          lastRowIndex: courseTable.length-1,
         })
         console.log(courseTable)
         // 3. 拼接学生名字
@@ -77,7 +80,7 @@ Page({
     console.log(e.currentTarget.dataset)
     this.setData({
       selected: { row, col },
-      fatherActive: !this.fatherActive
+      footerActive: !this.fatherActive
     })
   },
 })
