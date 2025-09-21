@@ -46,6 +46,9 @@ Page({
       success: (res) => {
         console.log(res.data)
         for (let course of res.data) {
+          course.studentNames = course.students.map(item => item.cn_name).join(" ");
+          course.totalCost = course.students.length * course.price
+          // 在字典里通过时间段id找到对应的课程数组, 再通过星期几找到对应的课程对象
           courseTable[course.course_time_id][course.weekday] = course
         }
         this.setData({
@@ -78,11 +81,10 @@ Page({
 
   selectCell(e) {
     const { row, col } = e.currentTarget.dataset
-    console.log(e.currentTarget.dataset)
     this.setData({
       selected: { row, col },
       footerActive: !this.fatherActive,
-      selectedCourse: courseTable[row][col],
+      selectedCourse: this.data.courseTable[row][col],
     })
   },
 })

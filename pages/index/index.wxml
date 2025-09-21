@@ -46,11 +46,11 @@
     </view>
   </view>
   <view class="course_footer" wx:if="{{footerActive}}">
-    <view>每小时：</view>
-    <view>课时费(单价)：</view>
-    <view>课时费(总价)：</view>
-    <view>人数：</view>
-    <view>学生：</view>
-    <view>课时剩余：</view>
+    <view>人数：{{selectedCourse.students.length}}</view>
+    <view>学生：{{selectedCourse.studentNames}}</view>
+    <view>课时费(每小时)：{{selectedCourse.per_hour_cost}}</view>
+    <view>课时费(单价)：{{selectedCourse.price}}</view>
+    <view>课时费(总价)：{{selectedCourse.totalCost}}</view>
+    <view>课时剩余：{{selectedCourse.course_left}}</view>
   </view>
 </view>
