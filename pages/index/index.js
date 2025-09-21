@@ -12,6 +12,10 @@ Page({
     selected: { row: -1, col: -1 }, // 选中的行号、列号
     selectedCourse: {},
     footerActive: true,
+    selectedWeekday: {
+      sumPrice: 0,
+      sumHours: 0,
+    },
   },
 
   onLoad(options) {
@@ -48,6 +52,8 @@ Page({
         for (let course of res.data) {
           course.studentNames = course.students.map(item => item.cn_name).join(" ");
           course.totalCost = course.students.length * course.price
+          course.timeRange = courseTable[course.course_time_id][0]
+          course.hours = utils.TimeStrToHour(course.timeRange)
           // 在字典里通过时间段id找到对应的课程数组, 再通过星期几找到对应的课程对象
           courseTable[course.course_time_id][course.weekday] = course
         }
@@ -61,14 +67,6 @@ Page({
           lastRowIndex: courseTable.length-1,
         })
         console.log(courseTable)
-        // 3. 拼接学生名字
-        // for (let one_row of res.data) {
-        //   one_row.students = one_row.students.map(item => item.cn_name).join(" ");
-        // }
-        // this.setData({
-        //   courses: res.data
-        // })
-        // console.log(res.data)
       },
       fail: (error) => {
 
@@ -81,10 +79,18 @@ Page({
 
   selectCell(e) {
     const { row, col } = e.currentTarget.dataset
+    let arr = this.data.courseTable.map(row => row[col]).filter(value => value && typeof value === 'object'); // 只保留对象
+    console.log(arr[0])
+    const sumPrice = arr.reduce((acc, cur) => acc + cur.totalCost, 0);
+    const sumHours = arr.reduce((acc, cur) => acc + cur.hours, 0);
     this.setData({
       selected: { row, col },
       footerActive: !this.fatherActive,
       selectedCourse: this.data.courseTable[row][col],
+      selectedWeekday: {
+        sumPrice,
+        sumHours,
+      }
     })
   },
 })

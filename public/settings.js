@@ -92,6 +92,10 @@ function sortTimeRanges(arr) {
   });
 }
 
+function TimeStrToHour(timeRange) {
+  return (parseTimeToMinutes2(timeRange.split('-')[1]) - parseTimeToMinutes2(timeRange.split('-')[0]))/60
+}
+
 module.exports = {
   baseUrl,
   weekday,
@@ -99,4 +103,5 @@ module.exports = {
   weekMap,
   timeSort2,
   sortTimeRanges,
+  TimeStrToHour,
 }

@@ -46,6 +46,10 @@
     </view>
   </view>
   <view class="course_footer" wx:if="{{footerActive}}">
+    <view>
+      <view>当日课时：{{selectedWeekday.sumHours}}</view>
+      <view>当日课时费：{{selectedWeekday.sumPrice}}</view>
+    </view>
     <view>人数：{{selectedCourse.students.length}}</view>
     <view>学生：{{selectedCourse.studentNames}}</view>
     <view>课时费(每小时)：{{selectedCourse.per_hour_cost}}</view>
