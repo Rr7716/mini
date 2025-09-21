@@ -10,7 +10,8 @@ Page({
     lastColIndex: 7,
     courseTimeDic: {}, // key
     selected: { row: -1, col: -1 }, // 选中的行号、列号
-    footerActive: false,
+    selectedCourse: {},
+    footerActive: true,
   },
 
   onLoad(options) {
@@ -45,7 +46,7 @@ Page({
       success: (res) => {
         console.log(res.data)
         for (let course of res.data) {
-          courseTable[course.course_time_id][course.weekday] = course.content
+          courseTable[course.course_time_id][course.weekday] = course
         }
         this.setData({
           courseTimeDic: courseTable
@@ -80,7 +81,8 @@ Page({
     console.log(e.currentTarget.dataset)
     this.setData({
       selected: { row, col },
-      footerActive: !this.fatherActive
+      footerActive: !this.fatherActive,
+      selectedCourse: courseTable[row][col],
     })
   },
 })
