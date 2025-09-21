@@ -52,7 +52,7 @@
         </view>
         <view class="dropdown-list" wx:if="{{ showDropdown }}">
           <checkbox-group bindchange="onCheckboxChange">
-            <block wx:for="{{ options }}" wx:key="index">
+            <block wx:for="{{ students }}" wx:key="index">
               <label class="checkbox-item">
                 <checkbox value="{{item.value}}" checked="{{item.checked}}" /> {{item.label}}
               </label>

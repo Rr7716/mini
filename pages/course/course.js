@@ -3,20 +3,17 @@ const utils = require("../../public/settings.js")
 Page({
   data: {
     courses: [],
-    showPopup: true,
+    showPopup: true, // 弹窗
     name: '',
     price: '',
-    weekdayList: Object.keys(utils.weekMap),
+    weekdayList: Object.keys(utils.weekMap), // 星期下拉框选项
     selectedWeekday: 0,  // 星期下拉框索引
-    timeRange: [],
+    timeRange: [], // 时间段下拉框选项
     selectedTimeRange: 0, // 时间段下拉框索引
-    showDropdown: false,
-    selectedText: '',
-    options: [
-      { label: '选项1', value: '1', checked: false },
-      { label: '选项2', value: '2', checked: false },
-      { label: '选项3', value: '3', checked: false },
-    ]
+    showDropdown: false, // 学生下拉多选框
+    selectedText: '', // 学生下拉多选框选中的文本显示
+    selectedStudentsId: [], // 学生下拉多选框选中的学生id
+    students: [],
   },
 
   onLoad(options) {
@@ -24,12 +21,13 @@ Page({
       title: '加载中...',
       mask: true // 不能再点击请求按钮, 防止请求多次
     })
+    // 请求课程内容
     wx.request({
       url: `${utils.baseUrl}/course/`,
       method: 'GET',
       data: {},
       header: {},
-      success: (res)=> {
+      success: (res) => {
         console.log(res.data)
         // 1. int的weekday转化为星期几
         // 2. 拼接weekday、开始时间、结束时间
@@ -47,19 +45,19 @@ Page({
         })
         console.log(res.data)
       },
-      fail: (error)=> {
+      fail: (error) => {
 
       },
-      complete: (res)=> {
+      complete: (res) => {
       }
     })
-
+    // 请求时间段
     wx.request({
       url: `${utils.baseUrl}/course_time/`,
       method: 'GET',
       data: {},
       header: {},
-      success: (res)=> {
+      success: (res) => {
         console.log(res.data)
         let tmp = []
         // 1. 拼接开始时间、结束时间
@@ -71,16 +69,42 @@ Page({
           timeRange: tmp
         })
       },
-      fail: (error)=> {
+      fail: (error) => {
 
       },
-      complete: (res)=> {
+      complete: (res) => {
+      }
+    })
+    // 请求学生内容
+    wx.request({
+      url: `${utils.baseUrl}/student/`,
+      method: 'GET',
+      data: {},
+      header: {},
+      success: (res) => {
+        console.log(res.data)
+        let arr = []
+        res.data.forEach((student, _) => {
+          arr = [...arr, {
+            'value': student.id,
+            'label': student.cn_name,
+            'checked': false
+          }]
+        })
+        this.setData({
+          students: arr
+        })
+      },
+      fail: (error) => {
+
+      },
+      complete: (res) => {
         wx.hideLoading() // 隐藏加载框
       }
     })
   },
 
-  OnClickAdd(){
+  OnClickAdd() {
     this.setData({ showPopup: !this.showPopup });
   },
 
@@ -124,18 +148,24 @@ Page({
 
   onCheckboxChange(e) {
     const values = e.detail.value; // 选中的值数组
-    const newOptions = this.data.options.map(item => ({
+    // 在这里students为更新前的值, 新的选中后, newOptions要去替换students
+    const newOptions = this.data.students.map(item => ({
       ...item,
-      checked: values.includes(item.value)
+      checked: values.includes(item.value) // 在这里去修改checked的值
     }));
     const selectedText = newOptions
       .filter(item => item.checked)
       .map(item => item.label)
       .join(', ');
+    // 选中的学生id数组
+    const selectedStudentsId = newOptions
+      .filter(item => item.checked)
+      .map(item => item.value)
 
     this.setData({
-      options: newOptions,
-      selectedText
+      students: newOptions,
+      selectedText,
+      selectedStudentsId,
     });
   }
 });
