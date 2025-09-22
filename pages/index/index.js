@@ -18,6 +18,8 @@ Page({
     },
     show: false,
     showStudentCheckbox: false,
+    students: [], // 字典, key为学生id, value为学生对象
+    studentsOptions: [], // picker的源数据
   },
 
   onLoad(options) {
@@ -39,7 +41,7 @@ Page({
         }
         console.log(courseTable)
       },
-      fail: (error) => {},
+      fail: (error) => { },
       complete: (res) => {
       }
     })
@@ -66,7 +68,7 @@ Page({
         console.log(utils.sortTimeRanges(courseTable)) // 按照时间段排序
         this.setData({
           courseTable,
-          lastRowIndex: courseTable.length-1,
+          lastRowIndex: courseTable.length - 1,
         })
         console.log(courseTable)
       },
@@ -74,7 +76,40 @@ Page({
 
       },
       complete: (res) => {
-        wx.hideLoading()
+      }
+    })
+    // 请求学生内容
+    wx.request({
+      url: `${utils.baseUrl}/student/`,
+      method: 'GET',
+      data: {},
+      header: {},
+      success: (res) => {
+        console.log(res.data)
+        let students = {}
+        let enNames = []
+        res.data.forEach((student, _) => {
+          console.log(student.en_name)
+          enNames = [...enNames, student.en_name]
+          students[student.id] = student
+        })
+        let studentsOptions = [{
+          values: enNames
+        }]
+        for (let i = 1; i < utils.StudentMaxNumber; i++) {
+          studentsOptions = [...studentsOptions, {
+            values: ['无', ...enNames]
+          }]
+        }
+        this.setData({
+          studentsOptions,
+          students
+        })
+      },
+      fail: (error) => {
+      },
+      complete: (res) => {
+        wx.hideLoading() // 隐藏加载框
       }
     })
   },

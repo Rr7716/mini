@@ -5,7 +5,8 @@
     "van-field": "@vant/weapp/field/index",
     "van-button": "@vant/weapp/button/index",
     "van-checkbox": "@vant/weapp/checkbox/index",
-    "van-checkbox-group": "@vant/weapp/checkbox-group/index"
+    "van-checkbox-group": "@vant/weapp/checkbox-group/index",
+    "van-picker": "@vant/weapp/picker/index"
   },
   "pages": [
     "pages/index/index",

@@ -1,4 +1,5 @@
 const baseUrl = 'http://127.0.0.1:8000';
+const StudentMaxNumber = 4;
 
 const weekday = {
   '1': '星期一',
@@ -97,6 +98,7 @@ function TimeStrToHour(timeRange) {
 }
 
 module.exports = {
+  StudentMaxNumber,
   baseUrl,
   weekday,
   timeSort,

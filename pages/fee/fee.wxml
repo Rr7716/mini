@@ -1,15 +1,1 @@
-<!-- 页面 -->
-<view class="container">
-  <button bindtap="showPopup">打开弹窗</button>
-
-  <!-- 遮罩层 -->
-  <view class="mask" wx:if="{{show}}" bindtap="hidePopup"></view>
-
-  <!-- 底部弹窗 -->
-  <view class="popup {{show ? 'popup-show' : ''}}">
-    <view class="popup-content">
-      <text>这是一个弹出窗口</text>
-      <button bindtap="hidePopup">关闭</button>
-    </view>
-  </view>
-</view>
+<van-picker columns="{{ columns }}" bind:change="onChange" />
