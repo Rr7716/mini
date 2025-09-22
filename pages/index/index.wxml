@@ -64,7 +64,7 @@
   <van-popup closeable close-icon="close" show="{{ show }}" position="bottom" custom-style="height: 50%;" bind:close="onClose">
     <view style="padding: 40rpx;">
       <van-field label="人数" placeholder="请输入人数" value="{{selectedCourse.students.length}}" readonly />
-      <van-field label="学生" value="{{selectedCourse.studentNames}}" bind:tap="onClickCheckBox" readonly />
+      <van-field label="学生" placeholder="请选择学生" value="{{selectedCourse.studentNames}}" bind:tap="onClickCheckBox" readonly />
       <van-field label="课时费(每小时)" placeholder="请输入课时费" value="{{selectedCourse.per_hour_cost}}" />
       <van-field label="课时费(单价)" placeholder="请输入课时费" value="{{selectedCourse.price}}" />
       <van-field label="课时费(总价)" placeholder="请输入课时费" value="{{selectedCourse.totalCost}}" readonly />

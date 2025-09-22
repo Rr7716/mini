@@ -145,6 +145,16 @@ Page({
     this.setData({
       showStudentCheckbox: true,
     })
+    // 选择空的课程会进入下面的if
+    if (!this.data.selectedCourse || !this.data.selectedCourse.studentNames.length) {
+      // 空课程每一列学生的选择都要改为默认值 -> '无'
+      this.data.studentsOptions.forEach((_, index) => {
+        this.setData({
+          [`studentsOptions[${index}].defaultIndex`]: 0
+        })
+      })
+      return
+    }
     let arr = this.data.selectedCourse.studentNames.split(' ')
     arr.forEach((name, index) => {
       let i = this.data.studentsOptions[index].values.indexOf(name)
@@ -160,7 +170,7 @@ Page({
   },
   onPickerChange(event) {
     this.setData({
-      'selectedCourse.studentNames': event.detail.value.filter((v) => v!=='无').join(' ')
+      'selectedCourse.studentNames': event.detail.value.filter((v) => v !== '无').join(' ')
     })
   },
 })
