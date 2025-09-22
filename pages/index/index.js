@@ -169,8 +169,15 @@ Page({
     })
   },
   onPickerChange(event) {
-    this.setData({
-      'selectedCourse.studentNames': event.detail.value.filter((v) => v !== '无').join(' ')
+    let studentsNameArr = event.detail.value.filter((v) => v !== '无')
+    let studentObjArr = []
+    studentsNameArr.forEach((name) => {
+      studentObjArr = [...studentObjArr, this.data.students[name]]
     })
+    this.setData({
+      'selectedCourse.studentNames': studentsNameArr.join(' '),
+      'selectedCourse.students': studentObjArr,
+    })
+    console.log(studentObjArr)
   },
 })
