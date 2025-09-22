@@ -54,7 +54,7 @@ Page({
       success: (res) => {
         console.log(res.data)
         for (let course of res.data) {
-          course.studentNames = course.students.map(item => item.cn_name).join(" ");
+          course.studentNames = course.students.map(item => item.en_name).join(" ");
           course.totalCost = course.students.length * course.price
           course.timeRange = courseTable[course.course_time_id][0]
           course.hours = utils.TimeStrToHour(course.timeRange)
@@ -73,7 +73,6 @@ Page({
         console.log(courseTable)
       },
       fail: (error) => {
-
       },
       complete: (res) => {
       }
@@ -89,14 +88,11 @@ Page({
         let students = {}
         let enNames = []
         res.data.forEach((student, _) => {
-          console.log(student.en_name)
           enNames = [...enNames, student.en_name]
-          students[student.id] = student
+          students[student.en_name] = student
         })
-        let studentsOptions = [{
-          values: enNames
-        }]
-        for (let i = 1; i < utils.StudentMaxNumber; i++) {
+        let studentsOptions = []
+        for (let i = 0; i < utils.StudentMaxNumber; i++) {
           studentsOptions = [...studentsOptions, {
             values: ['无', ...enNames]
           }]
@@ -149,15 +145,22 @@ Page({
     this.setData({
       showStudentCheckbox: true,
     })
+    let arr = this.data.selectedCourse.studentNames.split(' ')
+    arr.forEach((name, index) => {
+      let i = this.data.studentsOptions[index].values.indexOf(name)
+      this.setData({
+        [`studentsOptions[${index}].defaultIndex`]: i
+      })
+    })
   },
   onCloseCheckbox(e) {
     this.setData({
       showStudentCheckbox: false,
     })
   },
-  onChangeCheckbox(e) {
+  onPickerChange(event) {
     this.setData({
-      checked: e.detail,
-    });
+      'selectedCourse.studentNames': event.detail.value.filter((v) => v!=='无').join(' ')
+    })
   },
 })

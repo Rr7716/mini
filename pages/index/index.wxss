@@ -61,3 +61,14 @@
   margin-bottom: 20rpx;
   color: rgba(69, 90, 100, 0.6);
 }
+
+.popup_btn_view {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20rpx;
+}
+
+.popup_btn_view > view {
+  width: 200rpx;
+}
