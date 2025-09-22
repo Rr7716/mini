@@ -233,4 +233,9 @@ Page({
       'selectedCourse.course_left': e.detail,
     })
   },
+  onChangeContent(e) {
+    this.setData({
+      'selectedCourse.content': e.detail,
+    })
+  },
 })
