@@ -20,6 +20,15 @@ Page({
     showStudentCheckbox: false,
     students: [], // 字典, key为学生id, value为学生对象
     studentsOptions: [], // picker的源数据
+    observers: {
+      'selectedCourse.price': function(newPrice) {
+        console.log(111)
+        let num = this.data.selectedCourse.students.length ? this.data.selectedCourse.students.length : 0
+        this.setData({
+          'selectedCourse.totalCost': newPrice * num
+        })
+      }
+    },
   },
 
   onLoad(options) {
@@ -57,10 +66,10 @@ Page({
         for (let course of res.data) {
           let timerange = `${course.course_time.start_time}-${course.course_time.end_time}`
           course.studentNames = course.students.map(item => item.en_name).join(" ");
-          course.totalCost = course.students.length * course.price
+          // course.totalCost = course.students.length * course.price
           course.timeRange = courseTable[timerange][0]
           course.hours = utils.TimeStrToHour(course.timeRange)
-          // 在字典里通过时间段id找到对应的课程数组, 再通过星期几找到对应的课程对象
+          // 在字典里通过时间段找到对应的课程数组, 再通过星期几找到对应的课程对象
           courseTable[timerange][course.weekday] = course
         }
         this.setData({
@@ -171,6 +180,7 @@ Page({
     })
   },
   onPickerChange(event) {
+    // 去掉没选的列
     let studentsNameArr = event.detail.value.filter((v) => v !== '无')
     let studentObjArr = []
     studentsNameArr.forEach((name) => {
@@ -181,9 +191,16 @@ Page({
       'selectedCourse.students': studentObjArr,
     })
     console.log(studentObjArr)
+
+    // 学生变了, 总价也得跟着变, 但这里可能还没有填单价
+    let price = typeof this.data.selectedCourse.price !== "undefined" ? this.data.selectedCourse.price : 0
+    this.setData({
+      'selectedCourse.totalCost': price * studentsNameArr.length
+    })
   },
 
   onClickAdd(e) {
+    console.log(this.data.selectedCourse)
     let a = {
       "students": [
         {
@@ -200,17 +217,22 @@ Page({
       "price": 140,
       "per_hour_cost": 140,
       "weekday": 1,
-      "course_time_id": "68ce87a285f5b55e5ec48375",
       "course_time": {
         "start_time": "08:00",
         "end_time": "09:00"
       },
-      "grade": "一年级",
       "content": "power up 0",
       "course_left": 10,
-      "description": "string"
     }
 
 
+  },
+
+  onSinglePriceChange(e) {
+    // 单价变了, 总价也得跟着变, 但这里可能还没有选学生
+    let num = typeof this.data.selectedCourse.students !== "undefined" ? (this.data.selectedCourse.students.length ? this.data.selectedCourse.students.length : 0) : 0
+    this.setData({
+      'selectedCourse.totalCost': e.detail.value * num
+    })
   },
 })
