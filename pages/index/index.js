@@ -182,6 +182,8 @@ Page({
   onPickerChange(event) {
     // 去掉没选的列
     let studentsNameArr = event.detail.value.filter((v) => v !== '无')
+    // 去重
+    studentsNameArr = [...new Set(studentsNameArr)]
     let studentObjArr = []
     studentsNameArr.forEach((name) => {
       studentObjArr = [...studentObjArr, this.data.students[name]]
