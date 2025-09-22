@@ -55,7 +55,12 @@
   color: white;
 }
 
+.students_checkbox_title {
+  margin-left: 50rpx;
+  margin-top: 100rpx;
+  margin-bottom: 20rpx;
+  color: rgba(69, 90, 100, 0.6);
+}
 .students_checkbox {
   margin-left: 50rpx;
-  margin-top: 80rpx;
 }

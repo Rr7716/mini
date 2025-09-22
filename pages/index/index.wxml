@@ -71,6 +71,7 @@
       <van-field label="剩余课时" placeholder="请输入剩余课时" value="{{selectedCourse.course_left}}" />
     </view>
     <van-popup closeable show="{{ showStudentCheckbox }}" position="top" custom-style="height: 40%;" bind:close="onCloseCheckbox">
+      <view class="students_checkbox_title">请选择上课学生：</view>
       <view class="students_checkbox">
         <van-checkbox value="{{ checked }}" bind:change="onChangeCheckbox">复选框</van-checkbox>
       </view>
