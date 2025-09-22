@@ -17,6 +17,7 @@ Page({
       sumHours: 0,
     },
     show: false,
+    showStudentCheckbox: false,
   },
 
   onLoad(options) {
@@ -107,5 +108,21 @@ Page({
     this.setData({
       show: false,
     })
-  }
+  },
+
+  onClickCheckBox(e) {
+    this.setData({
+      showStudentCheckbox: true,
+    })
+  },
+  onCloseCheckbox(e) {
+    this.setData({
+      showStudentCheckbox: false,
+    })
+  },
+  onChangeCheckbox(e) {
+    this.setData({
+      checked: e.detail,
+    });
+  },
 })

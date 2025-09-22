@@ -55,6 +55,7 @@
   color: white;
 }
 
-.course_input {
-  border: 1rpx solid black;
+.students_checkbox {
+  margin-left: 50rpx;
+  margin-top: 80rpx;
 }
