@@ -71,7 +71,7 @@
       <van-field label="剩余课时" placeholder="请输入剩余课时" value="{{selectedCourse.course_left}}" />
       <view class="popup_btn_view">
         <view>
-          <van-button type="primary">新增</van-button>
+          <van-button type="primary" bind:tap="onClickAdd">新增</van-button>
         </view>
         <view>
           <van-button type="info">修改</van-button>

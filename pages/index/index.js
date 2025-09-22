@@ -37,7 +37,8 @@ Page({
       success: (res) => {
         console.log(res.data)
         for (let one of res.data) {
-          courseTable[one.id] = [`${one.start_time}-${one.end_time}`, '', '', '', '', '', '', '']
+          let timerange = `${one.start_time}-${one.end_time}`
+          courseTable[timerange] = [timerange, '', '', '', '', '', '', '']
         }
         console.log(courseTable)
       },
@@ -54,12 +55,13 @@ Page({
       success: (res) => {
         console.log(res.data)
         for (let course of res.data) {
+          let timerange = `${course.course_time.start_time}-${course.course_time.end_time}`
           course.studentNames = course.students.map(item => item.en_name).join(" ");
           course.totalCost = course.students.length * course.price
-          course.timeRange = courseTable[course.course_time_id][0]
+          course.timeRange = courseTable[timerange][0]
           course.hours = utils.TimeStrToHour(course.timeRange)
           // 在字典里通过时间段id找到对应的课程数组, 再通过星期几找到对应的课程对象
-          courseTable[course.course_time_id][course.weekday] = course
+          courseTable[timerange][course.weekday] = course
         }
         this.setData({
           courseTimeDic: courseTable
@@ -179,5 +181,36 @@ Page({
       'selectedCourse.students': studentObjArr,
     })
     console.log(studentObjArr)
+  },
+
+  onClickAdd(e) {
+    let a = {
+      "students": [
+        {
+          "cn_name": "张三",
+          "en_name": "Tom",
+          "age": 11
+        },
+        {
+          "cn_name": "李四",
+          "en_name": "Jack",
+          "age": 12
+        }
+      ],
+      "price": 140,
+      "per_hour_cost": 140,
+      "weekday": 1,
+      "course_time_id": "68ce87a285f5b55e5ec48375",
+      "course_time": {
+        "start_time": "08:00",
+        "end_time": "09:00"
+      },
+      "grade": "一年级",
+      "content": "power up 0",
+      "course_left": 10,
+      "description": "string"
+    }
+
+
   },
 })
