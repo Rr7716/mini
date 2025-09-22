@@ -65,10 +65,10 @@
     <view style="padding: 40rpx;">
       <van-field label="人数" placeholder="请输入人数" value="{{selectedCourse.students.length}}" readonly />
       <van-field label="学生" placeholder="请选择学生" value="{{selectedCourse.studentNames}}" bind:tap="onClickCheckBox" readonly />
-      <van-field label="课时费(每小时)" placeholder="请输入课时费" value="{{selectedCourse.per_hour_cost}}" />
-      <van-field label="课时费(单价)" placeholder="请输入课时费" value="{{selectedCourse.price}}" bindblur='onSinglePriceChange' />
+      <van-field label="课时费(每小时)" placeholder="请输入课时费" value="{{selectedCourse.per_hour_cost}}" bind:change="onChangePerHourCost"/>
+      <van-field label="课时费(单价)" placeholder="请输入课时费" value="{{selectedCourse.price}}" bindblur='onChangePrice'/>
       <van-field label="课时费(总价)" placeholder="请输入课时费" value="{{selectedCourse.totalCost}}" readonly />
-      <van-field label="剩余课时" placeholder="请输入剩余课时" value="{{selectedCourse.course_left}}" />
+      <van-field label="剩余课时" placeholder="请输入剩余课时" value="{{selectedCourse.course_left}}" bind:change="onChangeCourseLeft"/>
       <view class="popup_btn_view">
         <view>
           <van-button type="primary" bind:tap="onClickAdd">新增</van-button>

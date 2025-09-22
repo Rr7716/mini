@@ -20,15 +20,6 @@ Page({
     showStudentCheckbox: false,
     students: [], // 字典, key为学生id, value为学生对象
     studentsOptions: [], // picker的源数据
-    observers: {
-      'selectedCourse.price': function(newPrice) {
-        console.log(111)
-        let num = this.data.selectedCourse.students.length ? this.data.selectedCourse.students.length : 0
-        this.setData({
-          'selectedCourse.totalCost': newPrice * num
-        })
-      }
-    },
   },
 
   onLoad(options) {
@@ -66,7 +57,7 @@ Page({
         for (let course of res.data) {
           let timerange = `${course.course_time.start_time}-${course.course_time.end_time}`
           course.studentNames = course.students.map(item => item.en_name).join(" ");
-          // course.totalCost = course.students.length * course.price
+          course.totalCost = course.students.length * course.price
           course.timeRange = courseTable[timerange][0]
           course.hours = utils.TimeStrToHour(course.timeRange)
           // 在字典里通过时间段找到对应的课程数组, 再通过星期几找到对应的课程对象
@@ -125,6 +116,7 @@ Page({
     const { row, col } = e.currentTarget.dataset
     let arr = this.data.courseTable.map(row => row[col]).filter(value => value && typeof value === 'object'); // 只保留对象
     console.log(arr[0])
+    // 当日统计
     const sumPrice = arr.reduce((acc, cur) => acc + cur.totalCost, 0);
     const sumHours = arr.reduce((acc, cur) => acc + cur.hours, 0);
     this.setData({
@@ -136,6 +128,17 @@ Page({
         sumHours,
       }
     })
+    // 空的课程
+    if (typeof this.data.courseTable[row][col] !== 'object') {
+      let timeRangeArr = this.data.courseTable[row][0].split('-')
+      this.setData({
+        'selectedCourse.course_time' : {
+          'start_time': timeRangeArr[0],
+          'end_time': timeRangeArr[1],
+        },
+        'selectedCourse.weekday': col,
+      })
+    }
     this.setData({
       show: true,
     })
@@ -157,7 +160,7 @@ Page({
       showStudentCheckbox: true,
     })
     // 选择空的课程会进入下面的if
-    if (!this.data.selectedCourse || !this.data.selectedCourse.studentNames.length) {
+    if (typeof this.data.selectedCourse.studentNames === 'undefined') {
       // 空课程每一列学生的选择都要改为默认值 -> '无'
       this.data.studentsOptions.forEach((_, index) => {
         this.setData({
@@ -166,6 +169,8 @@ Page({
       })
       return
     }
+
+    // 有内容的课程重新定位学生选中的index
     let arr = this.data.selectedCourse.studentNames.split(' ')
     arr.forEach((name, index) => {
       let i = this.data.studentsOptions[index].values.indexOf(name)
@@ -204,37 +209,28 @@ Page({
   onClickAdd(e) {
     console.log(this.data.selectedCourse)
     let a = {
-      "students": [
-        {
-          "cn_name": "张三",
-          "en_name": "Tom",
-          "age": 11
-        },
-        {
-          "cn_name": "李四",
-          "en_name": "Jack",
-          "age": 12
-        }
-      ],
-      "price": 140,
-      "per_hour_cost": 140,
-      "weekday": 1,
-      "course_time": {
-        "start_time": "08:00",
-        "end_time": "09:00"
-      },
       "content": "power up 0",
-      "course_left": 10,
     }
 
 
   },
 
-  onSinglePriceChange(e) {
+  onChangePrice(e) {
     // 单价变了, 总价也得跟着变, 但这里可能还没有选学生
     let num = typeof this.data.selectedCourse.students !== "undefined" ? (this.data.selectedCourse.students.length ? this.data.selectedCourse.students.length : 0) : 0
     this.setData({
-      'selectedCourse.totalCost': e.detail.value * num
+      'selectedCourse.totalCost': e.detail.value * num,
+      'selectedCourse.price': e.detail.value,
+    })
+  },
+  onChangePerHourCost(e) {
+    this.setData({
+      'selectedCourse.per_hour_cost': e.detail,
+    })
+  },
+  onChangeCourseLeft(e) {
+    this.setData({
+      'selectedCourse.course_left': e.detail,
     })
   },
 })
