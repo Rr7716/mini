@@ -201,6 +201,10 @@ Page({
   },
 
   onClickAdd(e) {
+    wx.showLoading({
+      title: '加载中...',
+      mask: true // 不能再点击请求按钮, 防止请求多次
+    })
     let course = this.data.selectedCourse
     console.log(course)
     wx.request({
@@ -228,11 +232,43 @@ Page({
     })
   },
   onClickUpdate(e) {
+    // 空的点更新按钮无效
+    if (typeof this.data.selectedCourse.id === 'undefined') return
 
+    let course = this.data.selectedCourse
+    let { row, col } = this.data.selected
+    console.log(course)
+
+    wx.request({
+      url: `${utils.baseUrl}/course/${course.id}`,
+      method: 'PUT',
+      data: course,
+      header: {
+        "Content-Type": "application/json" // 一般用 application/json
+      },
+      success: (res) => {
+        this.setData({
+          [`courseTable[${row}][${col}]`]: course,
+          selectedCourse: {},
+          show: false,
+          selected: { row: -1, col: -1 },
+        })
+      },
+      fail: (error) => {
+
+      },
+      complete: (res) => {
+        // wx.hideLoading()
+        Toast.success('删除成功');
+      }
+    })
   },
   onClickDelte(e) {
+    // 空的点删除按钮无效
+    if (typeof this.data.selectedCourse.id === 'undefined') return
+
     let course = this.data.selectedCourse
-    let {row, col} = this.data.selected
+    let { row, col } = this.data.selected
     console.log(course)
     Dialog.confirm({
       title: '删除课程',
@@ -240,10 +276,13 @@ Page({
     })
       .then(() => {
         // on confirm
+        // wx.showLoading({
+        //   title: '加载中...',
+        //   mask: true // 不能再点击请求按钮, 防止请求多次
+        // })
         wx.request({
           url: `${utils.baseUrl}/course/${course.id}`,
           method: 'DELETE',
-          data: course,
           header: {
             "Content-Type": "application/json" // 一般用 application/json
           },
@@ -259,7 +298,7 @@ Page({
 
           },
           complete: (res) => {
-            wx.hideLoading()
+            // wx.hideLoading()
             Toast.success('删除成功');
           }
         })

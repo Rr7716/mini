@@ -8,7 +8,8 @@
     "van-checkbox-group": "@vant/weapp/checkbox-group/index",
     "van-picker": "@vant/weapp/picker/index",
     "van-toast": "@vant/weapp/toast/index",
-    "van-dialog": "@vant/weapp/dialog/index"
+    "van-dialog": "@vant/weapp/dialog/index",
+    "van-loading": "@vant/weapp/loading/index"
   },
   "pages": [
     "pages/index/index",
