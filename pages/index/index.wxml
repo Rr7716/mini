@@ -29,7 +29,9 @@
       </view>
       <!-- 最后一列单独显示 -->
       <view class="block last_col {{selected.row === row_num && selected.col === lastColIndex ? 'active' : ''}}" bindtap="selectCell" data-row="{{row_num}}" data-col="{{lastColIndex}}">
-        {{one_row[lastColIndex].content}}
+        <view class="course_content">
+          {{one_row[lastColIndex].content}}
+        </view>
       </view>
     </view>
     <!-- 最后一行单独显示 -->
@@ -46,44 +48,46 @@
       </view>
       <!-- 最后一列单独显示 -->
       <view class="block last_col {{selected.row === lastRowIndex && selected.col === lastColIndex ? 'active' : ''}}" bindtap="selectCell" data-row="{{lastRowIndex}}" data-col="{{lastColIndex}}">
-        {{courseTable[lastRowIndex][lastColIndex].content}}
+        <view class="course_content">
+          {{courseTable[lastRowIndex][lastColIndex].content}}
+        </view>
       </view>
     </view>
-
-    <van-button type="primary" bind:tap="onClick">主要按钮</van-button>
   </view>
-  <view class="course_footer" wx:if="{{footerActive}}">
+  <!-- <view class="course_footer" wx:if="{{footerActive}}">
     <view>人数：{{selectedCourse.students.length}}</view>
     <view>学生：{{selectedCourse.studentNames}}</view>
     <view>课时费(每小时)：{{selectedCourse.per_hour_cost}}</view>
     <view>课时费(单价)：{{selectedCourse.price}}</view>
     <view>课时费(总价)：{{selectedCourse.totalCost}}</view>
     <view>课时剩余：{{selectedCourse.course_left}}</view>
-  </view>
+  </view> -->
 
   <van-popup closeable close-icon="close" show="{{ show }}" position="bottom" custom-style="height: 55%;" bind:close="onClose">
     <view style="padding: 40rpx;">
-      <van-field label="课程名称" placeholder="请输入课程名称" value="{{selectedCourse.content}}" bind:change="onChangeContent"/>
+      <van-field label="课程名称" placeholder="请输入课程名称" value="{{selectedCourse.content}}" bind:change="onChangeContent" />
       <van-field label="人数" placeholder="0" value="{{selectedCourse.students.length}}" readonly />
       <van-field label="学生" placeholder="请选择学生" value="{{selectedCourse.studentNames}}" bind:tap="onClickCheckBox" readonly />
-      <van-field label="课时费(每小时)" placeholder="请输入课时费" value="{{selectedCourse.per_hour_cost}}" bind:change="onChangePerHourCost"/>
-      <van-field label="课时费(单价)" placeholder="请输入课时费" value="{{selectedCourse.price}}" bindblur='onChangePrice'/>
+      <van-field label="课时费(每小时)" placeholder="请输入课时费" value="{{selectedCourse.per_hour_cost}}" bind:change="onChangePerHourCost" />
+      <van-field label="课时费(单价)" placeholder="请输入课时费" value="{{selectedCourse.price}}" bindblur='onChangePrice' />
       <van-field label="课时费(总价)" placeholder="请输入课时费" value="{{selectedCourse.totalCost}}" readonly />
-      <van-field label="剩余课时" placeholder="请输入剩余课时" value="{{selectedCourse.course_left}}" bind:change="onChangeCourseLeft"/>
+      <van-field label="剩余课时" placeholder="请输入剩余课时" value="{{selectedCourse.course_left}}" bind:change="onChangeCourseLeft" />
       <view class="popup_btn_view">
         <view>
           <van-button type="primary" bind:tap="onClickAdd">新增</van-button>
         </view>
         <view>
-          <van-button type="info">修改</van-button>
+          <van-button type="info" bind:tap="onClickUpdate">修改</van-button>
         </view>
         <view>
-          <van-button type="danger">删除</van-button>
+          <van-button type="danger" bind:tap="onClickDelte">删除</van-button>
         </view>
       </view>
     </view>
     <van-popup closeable show="{{ showStudentCheckbox }}" custom-style="height: 75%; width: 90%;" bind:close="onCloseCheckbox">
       <van-picker columns="{{ studentsOptions }}" bind:change="onPickerChange" />
     </van-popup>
+    <van-toast id="van-toast" />
+    <van-dialog id="van-dialog" />
   </van-popup>
 </view>

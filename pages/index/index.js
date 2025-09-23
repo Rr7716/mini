@@ -1,3 +1,6 @@
+import Toast from '@vant/weapp/toast/toast';
+import Dialog from '@vant/weapp/dialog/dialog';
+
 const utils = require("../../public/settings.js")
 
 Page({
@@ -5,10 +8,9 @@ Page({
     headers: ['  ', '周一', '周二', '周三', '周四', '周五', '周六', '周日',],
     courseTable: [
       // ['07:00-08:00', '', '', '', '', '', '', '']
-    ],
+    ], // 展示课表的
     lastRowIndex: 0,
     lastColIndex: 7,
-    courseTimeDic: {}, // key
     selected: { row: -1, col: -1 }, // 选中的行号、列号
     selectedCourse: {},
     footerActive: true,
@@ -63,9 +65,6 @@ Page({
           // 在字典里通过时间段找到对应的课程数组, 再通过星期几找到对应的课程对象
           courseTable[timerange][course.weekday] = course
         }
-        this.setData({
-          courseTimeDic: courseTable
-        });
         courseTable = Object.values(courseTable) // 字典转数组, 不要key的id了
         console.log(utils.sortTimeRanges(courseTable)) // 按照时间段排序
         this.setData({
@@ -132,7 +131,7 @@ Page({
     if (typeof this.data.courseTable[row][col] !== 'object') {
       let timeRangeArr = this.data.courseTable[row][0].split('-')
       this.setData({
-        'selectedCourse.course_time' : {
+        'selectedCourse.course_time': {
           'start_time': timeRangeArr[0],
           'end_time': timeRangeArr[1],
         },
@@ -144,11 +143,6 @@ Page({
     })
   },
 
-  onClick(e) {
-    this.setData({
-      show: true,
-    })
-  },
   onClose(e) {
     this.setData({
       show: false,
@@ -207,14 +201,75 @@ Page({
   },
 
   onClickAdd(e) {
-    console.log(this.data.selectedCourse)
-    let a = {
-      "content": "power up 0",
-    }
+    let course = this.data.selectedCourse
+    console.log(course)
+    wx.request({
+      url: `${utils.baseUrl}/course/`,
+      method: 'POST',
+      data: course,
+      header: {
+        "Content-Type": "application/json" // 一般用 application/json
+      },
+      success: (res) => {
+        this.setData({
+          [`courseTable[${course.row}][${course.col}]`]: course,
+          show: false,
+          selectedCourse: {},
+        });
+        console.log(this.data.courseTable)
+      },
+      fail: (error) => {
 
+      },
+      complete: (res) => {
+        wx.hideLoading()
+        Toast.success('添加成功');
+      }
+    })
+  },
+  onClickUpdate(e) {
 
   },
+  onClickDelte(e) {
+    let course = this.data.selectedCourse
+    let {row, col} = this.data.selected
+    console.log(course)
+    Dialog.confirm({
+      title: '删除课程',
+      message: `确认要删除「${utils.weekday[course.weekday]}${course.timeRange} ${course.content}」课程吗`,
+    })
+      .then(() => {
+        // on confirm
+        wx.request({
+          url: `${utils.baseUrl}/course/${course.id}`,
+          method: 'DELETE',
+          data: course,
+          header: {
+            "Content-Type": "application/json" // 一般用 application/json
+          },
+          success: (res) => {
+            this.setData({
+              [`courseTable[${row}][${col}]`]: '',
+              selectedCourse: {},
+              show: false,
+              selected: { row: -1, col: -1 },
+            })
+          },
+          fail: (error) => {
 
+          },
+          complete: (res) => {
+            wx.hideLoading()
+            Toast.success('删除成功');
+          }
+        })
+      })
+      .catch(() => {
+        // on cancel
+      });
+  },
+
+  // 更新输入框value
   onChangePrice(e) {
     // 单价变了, 总价也得跟着变, 但这里可能还没有选学生
     let num = typeof this.data.selectedCourse.students !== "undefined" ? (this.data.selectedCourse.students.length ? this.data.selectedCourse.students.length : 0) : 0
