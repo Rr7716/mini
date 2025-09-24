@@ -1,7 +1,7 @@
 <view class="course_container">
   <view class="course_top">
     <view class="time_view">
-      <time-display />
+      <time-display id='clock'/>
     </view>
   </view>
   <view class="course_main">
