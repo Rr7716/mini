@@ -1,0 +1,3 @@
+<view class="time-box">
+  <text class="time-text">{{now}}</text>
+</view>

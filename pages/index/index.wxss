@@ -71,3 +71,15 @@
 .popup_btn_view > view {
   width: 200rpx;
 }
+
+.time_view {
+  width: 230rpx;
+  padding: 5rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 20rpx;
+  margin-top: 120rpx;
+  background-color: rgb(253, 243, 146);
+  border-radius: 20rpx;
+}

@@ -1,5 +1,9 @@
 <view class="course_container">
-  <view class="course_top"></view>
+  <view class="course_top">
+    <view class="time_view">
+      <time-display />
+    </view>
+  </view>
   <view class="course_main">
     <!-- 显示周一到周日 -->
     <view class="header">
@@ -50,7 +54,7 @@
       </view>
     </view>
 
-    <view class="show_total">
+    <view wx:if="{{selectedHeaderCol!==-1}}" class="show_total">
       <van-field label="当日课时" value="{{selectedWeekday.sumHours}}" readonly />
       <van-field label="当日课时费：" value="{{selectedWeekday.sumPrice}}" readonly />
     </view>

@@ -6,6 +6,7 @@ const utils = require("../../public/settings.js")
 
 Page({
   data: {
+    now: '',
     headers: ['  ', '周一', '周二', '周三', '周四', '周五', '周六', '周日',],
     courseTable: [
       // ['07:00-08:00', '', '', '', '', '', '', '']
@@ -404,5 +405,29 @@ Page({
   IsCourseExist() {
     let { row, col } = this.data.selected
     return this.data.courseTable[row][col] !== ''
+  },
+  lifetimes: {
+    attached() {
+      this.updateTime();
+      this._timer = setInterval(() => {
+        this.updateTime();
+      }, 1000);
+    },
+    detached() {
+      if (this._timer) {
+        clearInterval(this._timer);
+      }
+    }
+  },
+  methods: {
+    updateTime() {
+      const d = new Date();
+      const hh = String(d.getHours()).padStart(2, '0');
+      const mm = String(d.getMinutes()).padStart(2, '0');
+      const ss = String(d.getSeconds()).padStart(2, '0');
+      this.setData({
+        now: `${hh}:${mm}:${ss}`
+      });
+    }
   }
 })
