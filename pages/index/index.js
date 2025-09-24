@@ -11,6 +11,7 @@ Page({
     ], // 展示课表的
     lastRowIndex: 0,
     lastColIndex: 7,
+    selectedHeaderCol: -1, // 选中的表头列号
     selected: { row: -1, col: -1 }, // 选中的行号、列号
     selectedCourse: {},
     footerActive: true,
@@ -110,22 +111,29 @@ Page({
       }
     })
   },
-
-  selectCell(e) {
-    const { row, col } = e.currentTarget.dataset
-    let arr = this.data.courseTable.map(row => row[col]).filter(value => value && typeof value === 'object'); // 只保留对象
-    console.log(arr[0])
-    // 当日统计
+  selectHeaderCol(e) {
+    const selectedHeaderCol = e.currentTarget.dataset.col
+    if (selectedHeaderCol === 0) return // 第一列为空, 不用管
+    let arr = this.data.courseTable.map(row => row[selectedHeaderCol]).filter(value => value && typeof value === 'object'); // 只保留对象
     const sumPrice = arr.reduce((acc, cur) => acc + cur.totalCost, 0);
     const sumHours = arr.reduce((acc, cur) => acc + cur.hours, 0);
     this.setData({
-      selected: { row, col },
-      footerActive: !this.fatherActive,
-      selectedCourse: this.data.courseTable[row][col],
+      selected: { row:-1, col:-1 },
+      selectedHeaderCol,
       selectedWeekday: {
         sumPrice,
         sumHours,
       }
+    })
+  },
+  selectCell(e) {
+    const { row, col } = e.currentTarget.dataset
+    this.setData({
+      selected: { row, col },
+      footerActive: !this.fatherActive,
+      selectedCourse: this.data.courseTable[row][col],
+      selectedHeaderCol: -1,
+      show: true,
     })
     // 空的课程
     if (typeof this.data.courseTable[row][col] !== 'object') {
@@ -138,9 +146,6 @@ Page({
         'selectedCourse.weekday': col,
       })
     }
-    this.setData({
-      show: true,
-    })
   },
 
   onClose(e) {
