@@ -1,5 +1,6 @@
 import Toast from '@vant/weapp/toast/toast';
 import Dialog from '@vant/weapp/dialog/dialog';
+import Notify from '@vant/weapp/notify/notify';
 
 const utils = require("../../public/settings.js")
 
@@ -19,10 +20,24 @@ Page({
       sumPrice: 0,
       sumHours: 0,
     },
-    show: false,
-    showStudentCheckbox: false,
+    showCourseDetail: false,
+    showStudentPicker: false,
     students: [], // 字典, key为学生id, value为学生对象
+    /*
+    [
+      {
+        'values': ['Tom', 'Jack'],
+        'defaultIndex': 0,
+      },
+      {
+        'values': ['Tom', 'Jack'],
+        'defaultIndex': 0,
+      },
+    ]
+    */
     studentsOptions: [], // picker的源数据
+    showCoursePicker: false,
+    courseOptions: [], // values为复制课程的下拉框源数据, src为字典, key为课程id, value为课程对象
   },
 
   onLoad(options) {
@@ -57,6 +72,8 @@ Page({
       header: {},
       success: (res) => {
         console.log(res.data)
+        let courseNamesArr = ['无']
+        let courseDic = {}
         for (let course of res.data) {
           let timerange = `${course.course_time.start_time}-${course.course_time.end_time}`
           course.studentNames = course.students.map(item => item.en_name).join(" ");
@@ -65,12 +82,18 @@ Page({
           course.hours = utils.TimeStrToHour(course.timeRange)
           // 在字典里通过时间段找到对应的课程数组, 再通过星期几找到对应的课程对象
           courseTable[timerange][course.weekday] = course
+          courseNamesArr = [...courseNamesArr, course.content]
+          courseDic[course.content] = course
         }
         courseTable = Object.values(courseTable) // 字典转数组, 不要key的id了
         console.log(utils.sortTimeRanges(courseTable)) // 按照时间段排序
         this.setData({
           courseTable,
           lastRowIndex: courseTable.length - 1,
+          courseOptions: {
+            values: courseNamesArr,
+            src: courseDic,
+          }
         })
         console.log(courseTable)
       },
@@ -118,7 +141,7 @@ Page({
     const sumPrice = arr.reduce((acc, cur) => acc + cur.totalCost, 0);
     const sumHours = arr.reduce((acc, cur) => acc + cur.hours, 0);
     this.setData({
-      selected: { row:-1, col:-1 },
+      selected: { row: -1, col: -1 },
       selectedHeaderCol,
       selectedWeekday: {
         sumPrice,
@@ -133,7 +156,7 @@ Page({
       footerActive: !this.fatherActive,
       selectedCourse: this.data.courseTable[row][col],
       selectedHeaderCol: -1,
-      show: true,
+      showCourseDetail: true,
     })
     // 空的课程
     if (typeof this.data.courseTable[row][col] !== 'object') {
@@ -149,14 +172,21 @@ Page({
   },
 
   onClose(e) {
+    this.UnselectedAction()
+  },
+  onClickExistCourse(e) {
     this.setData({
-      show: false,
+      showCoursePicker: true,
     })
   },
-
-  onClickCheckBox(e) {
+  onCloseCoursePicker(e) {
     this.setData({
-      showStudentCheckbox: true,
+      showCoursePicker: false,
+    })
+  },
+  onClickStudents(e) {
+    this.setData({
+      showStudentPicker: true,
     })
     // 选择空的课程会进入下面的if
     if (typeof this.data.selectedCourse.studentNames === 'undefined') {
@@ -178,12 +208,12 @@ Page({
       })
     })
   },
-  onCloseCheckbox(e) {
+  onCloseStudents(e) {
     this.setData({
-      showStudentCheckbox: false,
+      showStudentPicker: false,
     })
   },
-  onPickerChange(event) {
+  onStudentPickerChange(event) {
     // 去掉没选的列
     let studentsNameArr = event.detail.value.filter((v) => v !== '无')
     // 去重
@@ -204,14 +234,27 @@ Page({
       'selectedCourse.totalCost': price * studentsNameArr.length
     })
   },
-
-  onClickAdd(e) {
-    wx.showLoading({
-      title: '加载中...',
-      mask: true // 不能再点击请求按钮, 防止请求多次
+  onCoursePickerChange(e) {
+    const content = e.detail.value
+    let selectedCourse = this.data.courseOptions.src[content]
+    selectedCourse.course_time = this.data.selectedCourse.course_time
+    selectedCourse.weekday = this.data.selectedCourse.weekday
+    this.setData({
+      selectedCourse
     })
+  },
+  onClickAdd(e) {
     let course = this.data.selectedCourse
+    let { row, col } = this.data.selected
     console.log(course)
+    if (!course.content) {
+      Dialog.alert({
+        message: '请输入课程名称',
+      }).then(() => {
+        // on close
+      });
+      return
+    }
     wx.request({
       url: `${utils.baseUrl}/course/`,
       method: 'POST',
@@ -221,17 +264,14 @@ Page({
       },
       success: (res) => {
         this.setData({
-          [`courseTable[${course.row}][${course.col}]`]: course,
-          show: false,
-          selectedCourse: {},
+          [`courseTable[${row}][${col}]`]: course,
         });
-        console.log(this.data.courseTable)
+        this.UnselectedAction()
       },
       fail: (error) => {
 
       },
       complete: (res) => {
-        wx.hideLoading()
         Toast.success('添加成功');
       }
     })
@@ -254,10 +294,8 @@ Page({
       success: (res) => {
         this.setData({
           [`courseTable[${row}][${col}]`]: course,
-          selectedCourse: {},
-          show: false,
-          selected: { row: -1, col: -1 },
         })
+        this.UnselectedAction()
       },
       fail: (error) => {
 
@@ -294,10 +332,8 @@ Page({
           success: (res) => {
             this.setData({
               [`courseTable[${row}][${col}]`]: '',
-              selectedCourse: {},
-              show: false,
-              selected: { row: -1, col: -1 },
             })
+            this.UnselectedAction()
           },
           fail: (error) => {
 
@@ -335,6 +371,14 @@ Page({
   onChangeContent(e) {
     this.setData({
       'selectedCourse.content': e.detail,
+    })
+  },
+
+  UnselectedAction() {
+    this.setData({
+      selectedCourse: {},
+      showCourseDetail: false,
+      selected: { row: -1, col: -1 },
     })
   },
 })
