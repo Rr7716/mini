@@ -171,7 +171,7 @@ Page({
     }
   },
 
-  onClose(e) {
+  onCloseCourseDetail(e) {
     this.UnselectedAction()
   },
   onClickExistCourse(e) {
@@ -255,6 +255,14 @@ Page({
       });
       return
     }
+    if (this.IsCourseExist()) {
+      Dialog.alert({
+        message: '该时刻课程已存在, 不能新增, 只能修改',
+      }).then(() => {
+        // on close
+      });
+      return
+    }
     wx.request({
       url: `${utils.baseUrl}/course/`,
       method: 'POST',
@@ -278,8 +286,14 @@ Page({
   },
   onClickUpdate(e) {
     // 空的点更新按钮无效
-    if (typeof this.data.selectedCourse.id === 'undefined') return
-
+    if (!this.IsCourseExist()) {
+      Dialog.alert({
+        message: '该时刻课程不存在, 请先添加',
+      }).then(() => {
+        // on close
+      });
+      return
+    }
     let course = this.data.selectedCourse
     let { row, col } = this.data.selected
     console.log(course)
@@ -308,8 +322,14 @@ Page({
   },
   onClickDelte(e) {
     // 空的点删除按钮无效
-    if (typeof this.data.selectedCourse.id === 'undefined') return
-
+    if (!this.IsCourseExist()) {
+      Dialog.alert({
+        message: '该时刻课程不存在, 请先添加',
+      }).then(() => {
+        // on close
+      });
+      return
+    }
     let course = this.data.selectedCourse
     let { row, col } = this.data.selected
     console.log(course)
@@ -381,4 +401,8 @@ Page({
       selected: { row: -1, col: -1 },
     })
   },
+  IsCourseExist() {
+    let { row, col } = this.data.selected
+    return this.data.courseTable[row][col] !== ''
+  }
 })

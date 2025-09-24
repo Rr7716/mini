@@ -65,7 +65,7 @@
   </view> -->
 
 
-  <van-popup closeable close-icon="close" show="{{ showCourseDetail }}" position="bottom" custom-style="height: 60%;" bind:close="onClose">
+  <van-popup closeable close-icon="close" show="{{ showCourseDetail }}" position="bottom" custom-style="height: 60%;" bind:close="onCloseCourseDetail">
     <view style="padding: 40rpx;">
       <van-field label="选择现有课程" placeholder="请选择现有课程" value="{{selectedCourse.content}}" bind:tap="onClickExistCourse" readonly />
       <van-field label="课程名称" placeholder="请输入课程名称" value="{{selectedCourse.content}}" bind:change="onChangeContent" />
