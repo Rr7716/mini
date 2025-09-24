@@ -31,19 +31,19 @@
       </view>
     </view>
     <!-- 最后一行单独显示 -->
-    <view class="header lastRow">
-      <view class="block">
+    <view class="header">
+      <view class="block lastRow">
         <view class="course_content">
           {{courseTable[lastRowIndex][0]}}
         </view>
       </view>
-      <view class="block" wx:for-index='col_num' wx:for-item='each' wx:for="{{courseTable[lastRowIndex]}}" wx:if="{{col_num!=lastColIndex && col_num!=0}}">
+      <view class="block lastRow" wx:for-index='col_num' wx:for-item='each' wx:for="{{courseTable[lastRowIndex]}}" wx:if="{{col_num!=lastColIndex && col_num!=0}}">
         <view class="course_content {{selected.row === lastRowIndex && selected.col === col_num ? 'active' : ''}}" bindtap="selectCell" data-row="{{lastRowIndex}}" data-col="{{col_num}}">
           {{each.content}}
         </view>
       </view>
       <!-- 最后一列单独显示 -->
-      <view class="block last_col {{selected.row === lastRowIndex && selected.col === lastColIndex ? 'active' : ''}}" bindtap="selectCell" data-row="{{lastRowIndex}}" data-col="{{lastColIndex}}">
+      <view class="block lastRow last_col {{selected.row === lastRowIndex && selected.col === lastColIndex ? 'active' : ''}}" bindtap="selectCell" data-row="{{lastRowIndex}}" data-col="{{lastColIndex}}">
         <view class="course_content">
           {{courseTable[lastRowIndex][lastColIndex].content}}
         </view>
