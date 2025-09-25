@@ -1,4 +1,7 @@
-const baseUrl = 'http://127.0.0.1:8000';
+const ip = '127.0.0.1'
+const port = 8000
+const baseUrl = `http://${ip}:${port}`;
+const wssUrl = `ws://${ip}:${port}`;
 const StudentMaxNumber = 4;
 
 const weekday = {
@@ -106,4 +109,5 @@ module.exports = {
   timeSort2,
   sortTimeRanges,
   TimeStrToHour,
+  wssUrl,
 }

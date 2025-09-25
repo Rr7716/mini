@@ -7,9 +7,9 @@ const utils = require("../../public/settings.js")
 Page({
   data: {
     headers: ['  ', '周一', '周二', '周三', '周四', '周五', '周六', '周日',],
-    courseTable: [
-      // ['07:00-08:00', '', '', '', '', '', '', '']
-    ], // 展示课表的
+    // ['07:00-08:00', '', '', '', '', '', '', '']
+    // 二维数组, 展示课表, 行号为course的weekday
+    courseTable: [],
     lastRowIndex: 0,
     lastColIndex: 7,
     selectedHeaderCol: -1, // 选中的表头列号
@@ -37,7 +37,12 @@ Page({
     */
     studentsOptions: [], // picker的源数据
     showCoursePicker: false,
-    courseOptions: [], // values为复制课程的下拉框源数据, src为字典, key为课程id, value为课程对象
+    courseOptions: { // values为复制课程的下拉框源数据, src为字典, key为课程id, value为课程对象
+      'values': [], // 课程名
+      'nameDic': {}, // key为课程名, value为课程对象
+    },
+    socketOpen: false,
+    messages: [],
   },
 
   onLoad(options) {
@@ -45,7 +50,7 @@ Page({
       title: '加载中...',
       mask: true // 不能再点击请求按钮, 防止请求多次
     })
-    let courseTable = {} // key为coure_time_id, value为['07:00-08:00', '', '', '', '', '', '', '']
+    let courseTable = {} // key为时间段, value为['07:00-08:00', '', '', '', '', '', '', '']
     // 请求课程时间
     wx.request({
       url: `${utils.baseUrl}/course_time/`,
@@ -83,16 +88,25 @@ Page({
           // 在字典里通过时间段找到对应的课程数组, 再通过星期几找到对应的课程对象
           courseTable[timerange][course.weekday] = course
           courseNamesArr = [...courseNamesArr, course.content]
-          courseDic[course.content] = course
         }
-        courseTable = Object.values(courseTable) // 字典转数组, 不要key的id了
+        courseTable = Object.values(courseTable) // 字典转数组, 不要key了
         console.log(utils.sortTimeRanges(courseTable)) // 按照时间段排序
+        // 给所有course对象加上row和col
+        courseTable.forEach((rowArr, rowNum) => {
+          rowArr.forEach((course, colNum) => {
+            if (colNum !== 0 && this.IsCourseExist(course)) {
+              course.row = rowNum
+              course.col = colNum
+              courseDic[course.content] = course
+            }
+          })
+        })
         this.setData({
           courseTable,
           lastRowIndex: courseTable.length - 1,
           courseOptions: {
             values: courseNamesArr,
-            src: courseDic,
+            nameDic: courseDic,
           }
         })
         console.log(courseTable)
@@ -135,9 +149,37 @@ Page({
     })
 
     // 启动自动消课时
-    this._timer = setInterval(() => {
-      this.AutoAdjustCourseLeft()
-    }, 60*1000);
+    // this._timer = setInterval(() => {
+    //   this.AutoAdjustCourseLeft()
+    // }, 10*1000);
+
+    // 建立 WebSocket 连接
+    wx.connectSocket({
+      url: `${utils.wssUrl}/ws`,  // 你的 FastAPI WebSocket 地址
+    });
+
+    // 绑定事件
+    wx.onSocketOpen(() => {
+      console.log('✅ WebSocket 已连接');
+    });
+
+    wx.onSocketMessage((res) => {
+      console.log('📩 收到消息:', res.data);
+
+      const updatedCourse = JSON.parse(res.data)
+      const targetCourse = this.data.courseTable.flat().find(course => course.id === updatedCourse.id);
+      this.setData({
+        [`courseTable[${targetCourse.row}][${targetCourse.col}].course_left`]: updatedCourse.course_left,
+      })
+    });
+
+    wx.onSocketClose(() => {
+      console.log('❌ WebSocket 已关闭');
+    });
+
+    wx.onSocketError((err) => {
+      console.error('⚠️ WebSocket 出错:', err);
+    });
   },
   selectHeaderCol(e) {
     const selectedHeaderCol = e.currentTarget.dataset.col
@@ -241,7 +283,7 @@ Page({
   },
   onCoursePickerChange(e) {
     const content = e.detail.value
-    let selectedCourse = this.data.courseOptions.src[content]
+    let selectedCourse = this.data.courseOptions.nameDic[content]
     selectedCourse.course_time = this.data.selectedCourse.course_time
     selectedCourse.weekday = this.data.selectedCourse.weekday
     this.setData({
@@ -260,7 +302,7 @@ Page({
       });
       return
     }
-    if (this.IsCourseExist()) {
+    if (this.IsCourseExist(this.data.courseTable[row][col])) {
       Dialog.alert({
         message: '该时刻课程已存在, 不能新增, 只能修改',
       }).then(() => {
@@ -291,7 +333,8 @@ Page({
   },
   onClickUpdate(e) {
     // 空的点更新按钮无效
-    if (!this.IsCourseExist()) {
+    let { row, col } = this.data.selected
+    if (!this.IsCourseExist(this.data.courseTable[row][col])) {
       Dialog.alert({
         message: '该时刻课程不存在, 请先添加',
       }).then(() => {
@@ -300,7 +343,6 @@ Page({
       return
     }
     let course = this.data.selectedCourse
-    let { row, col } = this.data.selected
     console.log(course)
 
     wx.request({
@@ -327,7 +369,8 @@ Page({
   },
   onClickDelte(e) {
     // 空的点删除按钮无效
-    if (!this.IsCourseExist()) {
+    let { row, col } = this.data.selected
+    if (!this.IsCourseExist(this.data.courseTable[row][col])) {
       Dialog.alert({
         message: '该时刻课程不存在, 请先添加',
       }).then(() => {
@@ -336,7 +379,6 @@ Page({
       return
     }
     let course = this.data.selectedCourse
-    let { row, col } = this.data.selected
     console.log(course)
     Dialog.confirm({
       title: '删除课程',
@@ -406,13 +448,50 @@ Page({
       selected: { row: -1, col: -1 },
     })
   },
-  IsCourseExist() {
-    let { row, col } = this.data.selected
-    return this.data.courseTable[row][col] !== ''
+  IsCourseExist(course) {
+    return course !== ''
   },
-  
+
   AutoAdjustCourseLeft() {
     const clock = this.selectComponent("#clock");
-    console.log("当前时间:", clock.data.now);
+    const nowStr = clock.data.now
+    console.log("当前时间:", nowStr);
+    const weekday = new Date().getDay();
+    let allCourses = []
+    this.data.courseTable.forEach((rowArr, rowNum) => {
+      rowArr.forEach((course, colNum) => {
+        if (colNum !== 0 && this.IsCourseExist(course)) {
+          allCourses = [...allCourses, course]
+        }
+      })
+    })
+    let todayCourses = allCourses.filter((course) => course.weekday === weekday)
+    todayCourses.forEach((course) => {
+      let row = course.row
+      let col = course.col
+      console.log(course)
+      if (this.IsExpire(nowStr, course)) {
+        this.setData()
+      }
+    })
+  },
+  IsExpire(nowStr, course) {
+    return true
+  },
+  // 发送消息给 FastAPI
+  sendMessage() {
+    if (this.data.socketOpen) {
+      this.socket.send({
+        data: "Hello from MiniProgram"
+      });
+    } else {
+      wx.showToast({ title: '未连接服务器', icon: 'error' });
+    }
+  },
+
+  onUnload() {
+    if (this.socket) {
+      this.socket.close();
+    }
   },
 })
