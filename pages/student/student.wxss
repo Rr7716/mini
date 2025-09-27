@@ -36,6 +36,22 @@
   border-bottom: 1rpx solid black;
 }
 
+.course_top > view {
+  margin-left: 10rpx;
+  margin-top: 80rpx;
+}
+.gender_view {
+  margin-top: 20rpx;
+  margin-bottom: 20rpx;
+}
+.gender_title {
+  margin-left: 30rpx;
+  font-size: 28rpx;
+  color: #646566;
+  font-weight: 400;
+  margin-right: 58rpx;
+}
+
 .active {
   background-color: #4caf50; /* 高亮颜色 */
   color: white;

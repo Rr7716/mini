@@ -10,14 +10,8 @@ Page({
     students: [],
     lastRowIndex: 0,
     lastColIndex: 5,
-    selected: { row: -1, col: -1 }, // 选中的行号、列号
-    selectedCourse: {},
-    footerActive: true,
-    selectedWeekday: {
-      sumPrice: 0,
-      sumHours: 0,
-    },
-    showCourseDetail: false,
+    selectedStudent: {},
+    showStudentDetail: false,
     showStudentPicker: false,
     studentsOptions: [], // picker的源数据
     showCoursePicker: false,
@@ -60,4 +54,52 @@ Page({
       }
     })
   },
+
+
+  // 新增按钮
+  onClickAddBtn(e) {
+    this.setData({
+      showStudentDetail: true,
+      selectedStudent: {},
+    })
+  },
+  onCloseStudentDetail(e) {
+    this.setData({
+      showStudentDetail: false,
+    })
+  },
+
+
+  selectCell(e) {
+    const { index } = e.currentTarget.dataset
+    let selectedStudent = this.data.students[index]
+    selectedStudent.index = index
+    
+    this.setData({
+      selectedStudent,
+      showStudentDetail: true,
+    })
+  },
+
+  onChangeEnName(e) {
+    this.setData({
+      'selectedStudent.en_name': e.detail,
+    })
+  },
+  onChangeCnName(e) {
+    this.setData({
+      'selectedStudent.cn_name': e.detail,
+    })},
+  onChangeGender(e) {
+    this.setData({
+      'selectedStudent.gender': e.detail,
+    })},
+  onChangeAge(e) {
+    this.setData({
+      'selectedStudent.age': e.detail,
+    })},
+  onChangeGrade(e) {
+    this.setData({
+      'selectedStudent.grade': e.detail,
+    })},
 })
