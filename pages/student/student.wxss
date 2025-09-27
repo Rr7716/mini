@@ -1,1 +1,69 @@
-/* pages/student/student.wxss */
+.course_container {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+}
+.course_top {
+  height: 180rpx;
+  width: 100vw;
+}
+.course_main {
+  flex: 1;
+  overflow: auto;
+  margin-left: 10rpx;
+}
+.header {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.last_col {
+  border-right: 1rpx solid black;
+}
+
+.block {
+  height: 90rpx;
+  width: 120rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 1rpx solid black;
+  border-left: 1rpx solid black;
+}
+
+.lastRow {
+  border-bottom: 1rpx solid black;
+}
+
+.active {
+  background-color: #4caf50; /* 高亮颜色 */
+  color: white;
+}
+
+.students_checkbox_title {
+  margin-left: 50rpx;
+  margin-top: 100rpx;
+  margin-bottom: 20rpx;
+  color: rgba(69, 90, 100, 0.6);
+}
+
+.popup_btn_view {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20rpx;
+}
+
+.popup_btn_view > view {
+  width: 200rpx;
+}
+
+.course_notice {
+  position: relative;
+}
+.course_notice>.tick {
+  position: absolute;   /* 子元素绝对定位 */
+  right: 0;             /* 贴到右边 */
+  bottom: 0;            /* 贴到底部 */
+}

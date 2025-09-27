@@ -1,2 +1,104 @@
-<!--pages/student/student.wxml-->
-<text>pages/student/student.wxml</text>
+<view class="course_container">
+  <view class="course_top">
+  </view>
+  <view class="course_main">
+    <!-- 显示表头 -->
+    <view class="header">
+      <view class="block {{selectedHeaderCol === col_num ? 'active' : ''}}" wx:for-index='col_num' wx:for-item='each' wx:if="{{col_num!=lastColIndex}}" wx:for="{{headers}}" bindtap="selectHeaderCol" data-col="{{col_num}}">
+        {{each}}
+      </view>
+      <!-- 最后一列单独显示 -->
+      <view class="block last_col {{selectedHeaderCol === lastColIndex ? 'active' : ''}}" bindtap="selectHeaderCol" data-col="{{lastColIndex}}">
+        {{headers[lastColIndex]}}
+      </view>
+    </view>
+    <!-- 显示学生信息 -->
+    <view class="header" wx:for-index='rowIndex' wx:for-item='one_row' wx:for="{{students}}" wx:if="{{rowIndex!=lastRowIndex}}">
+      <!-- 第一列 -->
+      <view class="block">
+        {{rowIndex}}
+      </view>
+      <view class="block">
+        {{one_row.en_name}}
+      </view>
+      <view class="block">
+        {{one_row.cn_name}}
+      </view>
+      <view class="block">
+        {{one_row.gender}}
+      </view>
+      <view class="block">
+        {{one_row.age}}
+      </view>
+      <view class="block last_col">
+        {{one_row.grade}}
+      </view>
+    </view>
+    <!-- 最后一行单独显示 -->
+    <view class="header">
+      <!-- 第一列 -->
+      <view class="block lastRow">
+        {{lastRowIndex}}
+      </view>
+      <view class="block lastRow">
+        {{students[lastRowIndex].en_name}}
+      </view>
+      <view class="block lastRow">
+        {{students[lastRowIndex].cn_name}}
+      </view>
+      <view class="block lastRow">
+        {{students[lastRowIndex].gender}}
+      </view>
+      <view class="block lastRow">
+        {{students[lastRowIndex].age}}
+      </view>
+      <view class="block lastRow last_col">
+        {{students[lastRowIndex].grade}}
+      </view>
+    </view>
+  </view>
+  <!-- <view class="course_footer" wx:if="{{footerActive}}">
+    <view>人数：{{selectedCourse.students.length}}</view>
+    <view>学生：{{selectedCourse.studentNames}}</view>
+    <view>课时费(每小时)：{{selectedCourse.per_hour_cost}}</view>
+    <view>课时费(单价)：{{selectedCourse.price}}</view>
+    <view>课时费(总价)：{{selectedCourse.totalCost}}</view>
+    <view>课时剩余：{{selectedCourse.course_left}}</view>
+  </view> -->
+
+
+  <van-popup closeable close-icon="close" show="{{ showCourseDetail }}" position="bottom" custom-style="height: 60%;" bind:close="onCloseCourseDetail">
+    <view style="padding: 40rpx;">
+      <van-field label="选择现有课程" placeholder="请选择现有课程" value="{{selectedCourse.content}}" bind:tap="onClickExistCourse" readonly />
+      <van-field label="课程名称" placeholder="请输入课程名称" value="{{selectedCourse.content}}" bind:change="onChangeContent" />
+      <van-field label="人数" placeholder="0" value="{{selectedCourse.students.length}}" readonly />
+      <van-field label="学生" placeholder="请选择学生" value="{{selectedCourse.studentNames}}" bind:tap="onClickStudents" readonly />
+      <van-field label="课时费(每小时)" placeholder="请输入课时费" value="{{selectedCourse.per_hour_cost}}" bind:change="onChangePerHourCost" />
+      <van-field label="课时费(单价)" placeholder="请输入课时费" value="{{selectedCourse.price}}" bindblur='onChangePrice' />
+      <van-field label="课时费(总价)" placeholder="请输入课时费" value="{{selectedCourse.totalCost}}" readonly />
+      <van-field label="剩余课时" placeholder="请输入剩余课时" value="{{selectedCourse.course_left}}" bind:change="onChangeCourseLeft" />
+      <view class="popup_btn_view">
+        <view>
+          <van-button type="primary" bind:tap="onClickAdd">新增</van-button>
+        </view>
+        <view>
+          <van-button type="info" bind:tap="onClickUpdate">修改</van-button>
+        </view>
+        <view>
+          <van-button type="danger" bind:tap="onClickDelte">删除</van-button>
+        </view>
+      </view>
+    </view>
+    <van-popup closeable show="{{ showStudentPicker }}" custom-style="height: 75%; width: 90%;" bind:close="onCloseStudents" round>
+      <van-picker columns="{{ studentsOptions }}" bind:change="onStudentPickerChange" />
+    </van-popup>
+
+    <van-popup closeable show="{{ showCoursePicker }}" custom-style="height: 30%; width: 90%;" bind:close="onCloseCoursePicker" round>
+      <van-picker columns="{{ courseOptions.values }}" bind:change="onCoursePickerChange" />
+    </van-popup>
+
+    <van-toast id="van-toast" />
+    <van-dialog id="van-dialog" />
+    <van-notify id="van-notify" />
+  </van-popup>
+</view>

@@ -3,6 +3,13 @@
     "miniprogram": {
       "list": [
         {
+          "name": "pages/student/student",
+          "pathName": "pages/student/student",
+          "query": "",
+          "scene": null,
+          "launchMode": "default"
+        },
+        {
           "name": "pages/course/course",
           "pathName": "pages/course/course",
           "query": "",
