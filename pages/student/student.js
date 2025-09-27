@@ -74,13 +74,14 @@ Page({
       showStudentDetail: false,
       selectedStudent: StudentConst,
     })
+    console.log(this.data.selectedStudent)
   },
 
 
   // 选中行
   selectCell(e) {
     const { index } = e.currentTarget.dataset
-    let selectedStudent = this.data.students[index]
+    let selectedStudent = {...this.data.students[index]}
     selectedStudent.index = index
     
     this.setData({
@@ -114,7 +115,6 @@ Page({
           selectedStudent: StudentConst,
           lastRowIndex: this.data.lastRowIndex+1,
         })
-        console.log(this.data.students)
       },
       fail: (error) => {
 
