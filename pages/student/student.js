@@ -4,13 +4,17 @@ import Notify from '@vant/weapp/notify/notify';
 
 const utils = require("../../public/settings.js")
 
+const StudentConst = {
+  'id': 0,
+}
+
 Page({
   data: {
     headers: ['序号', '英文名', '中文名', '性别', '年龄', '年级'],
     students: [],
     lastRowIndex: 0,
     lastColIndex: 5,
-    selectedStudent: {},
+    selectedStudent: StudentConst,
     showStudentDetail: false,
     showStudentPicker: false,
     studentsOptions: [], // picker的源数据
@@ -40,6 +44,7 @@ Page({
         let students = []
         const lastRowIndex = res.data.length-1
         res.data.forEach((student, _) => {
+          student.gender_cn = utils.GenderDic[student.gender]
           students = [...students, student]
         })
         this.setData({
@@ -60,16 +65,19 @@ Page({
   onClickAddBtn(e) {
     this.setData({
       showStudentDetail: true,
-      selectedStudent: {},
+      selectedStudent: StudentConst,
     })
+    console.log(this.data.selectedStudent.id)
   },
   onCloseStudentDetail(e) {
     this.setData({
       showStudentDetail: false,
+      selectedStudent: StudentConst,
     })
   },
 
 
+  // 选中行
   selectCell(e) {
     const { index } = e.currentTarget.dataset
     let selectedStudent = this.data.students[index]
@@ -80,6 +88,45 @@ Page({
       showStudentDetail: true,
     })
   },
+
+
+  // 保存按钮
+  onClickSave(e) {
+    const student = this.data.selectedStudent
+    delete student.id;
+    student.age = Number(student.age)
+    student.gender_cn = utils.GenderDic[student.gender]
+    console.log(student)
+    wx.request({
+      url: `${utils.baseUrl}/student/`,
+      method: 'POST',
+      data: student,
+      header: {
+        "Content-Type": "application/json" // 一般用 application/json
+      },
+      success: (res) => {
+        console.log(res.data)
+        // 新增后得到的id要更新一下
+        student.id = res.data.id
+        this.setData({
+          students: [...this.data.students, student],
+          showStudentDetail: false,
+          selectedStudent: StudentConst,
+          lastRowIndex: this.data.lastRowIndex+1,
+        })
+        console.log(this.data.students)
+      },
+      fail: (error) => {
+
+      },
+      complete: (res) => {
+        Toast.success('添加成功');
+      }
+    })
+  },
+  onClickUpdate(e) {},
+  onClickDelete(e) {},
+
 
   onChangeEnName(e) {
     this.setData({

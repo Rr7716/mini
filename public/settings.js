@@ -3,6 +3,10 @@ const port = 8000
 const baseUrl = `http://${ip}:${port}`;
 const wssUrl = `ws://${ip}:${port}`;
 const StudentMaxNumber = 4;
+const GenderDic = {
+  'boy': '男',
+  'girl': '女',
+}
 
 const weekday = {
   '1': '星期一',
@@ -128,4 +132,5 @@ module.exports = {
   TimeStrToHour,
   wssUrl,
   getWeekRange,
+  GenderDic,
 }

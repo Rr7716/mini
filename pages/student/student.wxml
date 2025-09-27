@@ -28,7 +28,7 @@
         {{one_row.cn_name}}
       </view>
       <view class="block {{selectedStudent.index === rowIndex ? 'active' : ''}}" bindtap="selectCell" data-index="{{rowIndex}}">
-        {{one_row.gender}}
+        {{one_row.gender_cn}}
       </view>
       <view class="block {{selectedStudent.index === rowIndex ? 'active' : ''}}" bindtap="selectCell" data-index="{{rowIndex}}">
         {{one_row.age}}
@@ -49,7 +49,7 @@
         {{students[lastRowIndex].cn_name}}
       </view>
       <view class="block lastRow {{selectedStudent.index === lastRowIndex ? 'active' : ''}}" bindtap="selectCell" data-index="{{lastRowIndex}}">
-        {{students[lastRowIndex].gender}}
+        {{students[lastRowIndex].gender_cn}}
       </view>
       <view class="block lastRow {{selectedStudent.index === lastRowIndex ? 'active' : ''}}" bindtap="selectCell" data-index="{{lastRowIndex}}">
         {{students[lastRowIndex].age}}
@@ -65,20 +65,22 @@
       <van-field label="英文名" placeholder="请输入英文名" value="{{selectedStudent.en_name}}" bind:change="onChangeEnName" />
       <van-field label="中文名" placeholder="请输入中文名" value="{{selectedStudent.cn_name}}" bind:change="onChangeCnName" />
       <view class="gender_view">
-        <van-radio-group direction='horizontal' value="{{ radio }}" bind:change="onChangeGender">
+        <van-radio-group direction='horizontal' value="{{ selectedStudent.gender }}" bind:change="onChangeGender">
           <view class="gender_title">请选择性别</view>
-          <van-radio name="1">男</van-radio>
-          <van-radio name="2">女</van-radio>
+          <van-radio name="boy">男</van-radio>
+          <van-radio name="girl">女</van-radio>
         </van-radio-group>
       </view>
       <van-field label="年龄" placeholder="请输入年龄" value="{{selectedStudent.age}}" bind:change="onChangeAge" />
       <van-field label="年级" placeholder="请输入年级" value="{{selectedStudent.grade}}" bind:change="onChangeGrade" />
-      <view class="popup_btn_view">
+      <view class="popup_btn_view"  wx:if="{{selectedStudent.id == '0'}}">
         <view>
-          <van-button type="primary" bind:tap="onClickAdd">新增</van-button>
+          <van-button type="primary" bind:tap="onClickSave">保存</van-button>
         </view>
+      </view>
+      <view class="popup_btn_view" wx:if="{{selectedStudent.id != '0'}}">
         <view>
-          <van-button type="info" bind:tap="onClickUpdate">修改</van-button>
+          <van-button type="info" bind:tap="onClickUpdate" >修改</van-button>
         </view>
         <view>
           <van-button type="danger" bind:tap="onClickDelte">删除</van-button>
