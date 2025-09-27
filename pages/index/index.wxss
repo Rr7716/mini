@@ -83,3 +83,12 @@
   background-color: rgb(253, 243, 146);
   border-radius: 20rpx;
 }
+
+.course_notice {
+  position: relative;
+}
+.course_notice>.tick {
+  position: absolute;   /* 子元素绝对定位 */
+  right: 0;             /* 贴到右边 */
+  bottom: 0;            /* 贴到底部 */
+}

@@ -46,6 +46,8 @@ Page({
   },
 
   onLoad(options) {
+    const { monday, sunday } = utils.getWeekRange(new Date());
+    console.log(`${monday}    ${sunday}`)
     wx.showLoading({
       title: '加载中...',
       mask: true // 不能再点击请求按钮, 防止请求多次
@@ -80,6 +82,9 @@ Page({
         let courseNamesArr = ['无']
         let courseDic = {}
         for (let course of res.data) {
+          // 检查消课情况
+          let target = new Date(course.last_expire_time);
+          course.has_expire = target >= monday && target <= sunday;
           let timerange = `${course.course_time.start_time}-${course.course_time.end_time}`
           course.studentNames = course.students.map(item => item.en_name).join(" ");
           course.totalCost = course.students.length * course.price
@@ -168,8 +173,11 @@ Page({
 
       const updatedCourse = JSON.parse(res.data)
       const targetCourse = this.data.courseTable.flat().find(course => course.id === updatedCourse.id);
+      console.log(this.data.courseTable)
+      console.log(targetCourse)
       this.setData({
         [`courseTable[${targetCourse.row}][${targetCourse.col}].course_left`]: updatedCourse.course_left,
+        [`courseTable[${targetCourse.row}][${targetCourse.col}].has_expire`]: true,
       })
     });
 
@@ -198,6 +206,7 @@ Page({
   },
   selectCell(e) {
     const { row, col } = e.currentTarget.dataset
+    console.log(this.data.courseTable)
     this.setData({
       selected: { row, col },
       footerActive: !this.fatherActive,
@@ -273,7 +282,6 @@ Page({
       'selectedCourse.studentNames': studentsNameArr.join(' '),
       'selectedCourse.students': studentObjArr,
     })
-    console.log(studentObjArr)
 
     // 学生变了, 总价也得跟着变, 但这里可能还没有填单价
     let price = typeof this.data.selectedCourse.price !== "undefined" ? this.data.selectedCourse.price : 0
@@ -282,12 +290,15 @@ Page({
     })
   },
   onCoursePickerChange(e) {
+    // 因为这里是从nameDic里取的, 修改了对象的值, 但最后没有对nameDic进行setData, 所以直接复制并不会改变nameDic中的对象
     const content = e.detail.value
     let selectedCourse = this.data.courseOptions.nameDic[content]
     selectedCourse.course_time = this.data.selectedCourse.course_time
     selectedCourse.weekday = this.data.selectedCourse.weekday
+    selectedCourse.has_expire = false
+    selectedCourse.course_left = 0 // 需要重新输入剩余课时
     this.setData({
-      selectedCourse
+      selectedCourse,
     })
   },
   onClickAdd(e) {
@@ -318,9 +329,15 @@ Page({
         "Content-Type": "application/json" // 一般用 application/json
       },
       success: (res) => {
+        console.log(res.data)
+        // 新增后得到的id要更新一下
+        course.id = res.data.id
+        course.row = row
+        course.col = col
         this.setData({
           [`courseTable[${row}][${col}]`]: course,
         });
+        console.log(`new: ${this.data.courseTable}`)
         this.UnselectedAction()
       },
       fail: (error) => {

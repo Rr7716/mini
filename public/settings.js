@@ -100,6 +100,23 @@ function TimeStrToHour(timeRange) {
   return (parseTimeToMinutes2(timeRange.split('-')[1]) - parseTimeToMinutes2(timeRange.split('-')[0]))/60
 }
 
+function getWeekRange(date = new Date()) {
+  let current = new Date(date);
+  let day = current.getDay();
+  if (day === 0) day = 7;
+
+  let monday = new Date(current);
+  monday.setDate(current.getDate() - (day - 1));
+  monday.setHours(0, 0, 0, 0);
+
+  let sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  sunday.setHours(23, 59, 59, 999);
+
+  return { monday, sunday };
+}
+
+
 module.exports = {
   StudentMaxNumber,
   baseUrl,
@@ -110,4 +127,5 @@ module.exports = {
   sortTimeRanges,
   TimeStrToHour,
   wssUrl,
+  getWeekRange,
 }

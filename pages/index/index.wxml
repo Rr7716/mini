@@ -22,15 +22,21 @@
           {{courseTable[row_num][0]}}
         </view>
       </view>
-      <view class="block" wx:for-index='col_num' wx:for-item='each' wx:for="{{one_row}}" wx:if="{{col_num!=lastColIndex && col_num!=0}}">
+      <view class="block course_notice" wx:for-index='col_num' wx:for-item='each' wx:for="{{one_row}}" wx:if="{{col_num!=lastColIndex && col_num!=0}}">
         <view class="course_content {{selected.row === row_num && selected.col === col_num ? 'active' : ''}}" bindtap="selectCell" data-row="{{row_num}}" data-col="{{col_num}}">
           {{each.content}}
         </view>
+        <view class="tick" wx:if="{{each.has_expire}}">
+          <van-icon name="success" color="green" />
+        </view>
       </view>
       <!-- 最后一列单独显示 -->
-      <view class="block last_col {{selected.row === row_num && selected.col === lastColIndex ? 'active' : ''}}" bindtap="selectCell" data-row="{{row_num}}" data-col="{{lastColIndex}}">
+      <view class="block course_notice last_col {{selected.row === row_num && selected.col === lastColIndex ? 'active' : ''}}" bindtap="selectCell" data-row="{{row_num}}" data-col="{{lastColIndex}}">
         <view class="course_content">
           {{one_row[lastColIndex].content}}
+        </view>
+        <view class="tick" wx:if="{{one_row[lastColIndex].has_expire}}">
+          <van-icon name="success" color="green" />
         </view>
       </view>
     </view>
@@ -41,15 +47,21 @@
           {{courseTable[lastRowIndex][0]}}
         </view>
       </view>
-      <view class="block lastRow" wx:for-index='col_num' wx:for-item='each' wx:for="{{courseTable[lastRowIndex]}}" wx:if="{{col_num!=lastColIndex && col_num!=0}}">
+      <view class="block course_notice lastRow" wx:for-index='col_num' wx:for-item='each' wx:for="{{courseTable[lastRowIndex]}}" wx:if="{{col_num!=lastColIndex && col_num!=0}}">
         <view class="course_content {{selected.row === lastRowIndex && selected.col === col_num ? 'active' : ''}}" bindtap="selectCell" data-row="{{lastRowIndex}}" data-col="{{col_num}}">
           {{each.content}}
         </view>
+        <view class="tick" wx:if="{{each.has_expire}}">
+          <van-icon name="success" color="green" />
+        </view>
       </view>
       <!-- 最后一列单独显示 -->
-      <view class="block lastRow last_col {{selected.row === lastRowIndex && selected.col === lastColIndex ? 'active' : ''}}" bindtap="selectCell" data-row="{{lastRowIndex}}" data-col="{{lastColIndex}}">
+      <view class="block course_notice lastRow last_col {{selected.row === lastRowIndex && selected.col === lastColIndex ? 'active' : ''}}" bindtap="selectCell" data-row="{{lastRowIndex}}" data-col="{{lastColIndex}}">
         <view class="course_content">
           {{courseTable[lastRowIndex][lastColIndex].content}}
+        </view>
+        <view class="tick" wx:if="{{courseTable[lastRowIndex][lastColIndex].has_expire}}">
+          <van-icon name="success" color="green" />
         </view>
       </view>
     </view>
