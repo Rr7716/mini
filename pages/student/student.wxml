@@ -40,7 +40,7 @@
     <!-- 最后一行单独显示 -->
     <view class="header">
       <view class="block lastRow {{selectedStudent.index === lastRowIndex ? 'active' : ''}}" bindtap="selectCell" data-index="{{lastRowIndex}}">
-        {{lastRowIndex}}
+        {{students[lastRowIndex].index}}
       </view>
       <view class="block lastRow {{selectedStudent.index === lastRowIndex ? 'active' : ''}}" bindtap="selectCell" data-index="{{lastRowIndex}}">
         {{students[lastRowIndex].en_name}}
@@ -83,7 +83,7 @@
           <van-button type="info" bind:tap="onClickUpdate" >修改</van-button>
         </view>
         <view>
-          <van-button type="danger" bind:tap="onClickDelte">删除</van-button>
+          <van-button type="danger" bind:tap="onClickDelete">删除</van-button>
         </view>
       </view>
     </view>

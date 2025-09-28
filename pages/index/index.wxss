@@ -89,6 +89,11 @@
 }
 .course_notice>.tick {
   position: absolute;   /* 子元素绝对定位 */
-  right: 0;             /* 贴到右边 */
+  right: 1rpx;             /* 贴到右边 */
   bottom: 0;            /* 贴到底部 */
+}
+
+.no_left {
+  background-color: rgb(238, 10, 36);
+  color: white;
 }

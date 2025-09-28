@@ -43,8 +43,9 @@ Page({
         console.log(res.data.length)
         let students = []
         const lastRowIndex = res.data.length-1
-        res.data.forEach((student, _) => {
+        res.data.forEach((student, index) => {
           student.gender_cn = utils.GenderDic[student.gender]
+          student.index = index
           students = [...students, student]
         })
         this.setData({
@@ -81,7 +82,7 @@ Page({
   // 选中行
   selectCell(e) {
     const { index } = e.currentTarget.dataset
-    let selectedStudent = {...this.data.students[index]}
+    let selectedStudent = {...this.data.students[index]} // 避免用同一个对象
     selectedStudent.index = index
     
     this.setData({
@@ -125,7 +126,34 @@ Page({
     })
   },
   onClickUpdate(e) {},
-  onClickDelete(e) {},
+  onClickDelete(e) {
+    let student = this.data.selectedStudent
+    console.log(student)
+
+    wx.request({
+      url: `${utils.baseUrl}/student/${student.id}`,
+      method: 'DELETE',
+      data: student,
+      header: {
+        "Content-Type": "application/json" // 一般用 application/json
+      },
+      success: (res) => {
+        this.setData({
+          students: this.data.students.filter((s) => s.id !== student.id),
+          showStudentDetail: false,
+          selectedStudent: StudentConst,
+          lastRowIndex: this.data.lastColIndex-1
+        })
+      },
+      fail: (error) => {
+
+      },
+      complete: (res) => {
+        // wx.hideLoading()
+        Toast.success('删除成功');
+      }
+    })
+  },
 
 
   onChangeEnName(e) {
