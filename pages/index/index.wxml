@@ -32,6 +32,9 @@
         <view class="tick" wx:if="{{each.course_left===0}}">
           <van-icon name="fail" color="#ee0a24" />
         </view>
+        <view class="tick" wx:if="{{each.takeleave}}">
+          <van-icon name="cross" />
+        </view>
       </view>
       <!-- 最后一列单独显示 -->
       <view class="block course_notice last_col {{selected.row === row_num && selected.col === lastColIndex ? 'active' : ''}}" bindtap="selectCell" data-row="{{row_num}}" data-col="{{lastColIndex}}">
@@ -43,6 +46,9 @@
         </view>
         <view class="tick" wx:if="{{one_row[lastColIndex].course_left===0}}">
           <van-icon name="fail" color="#ee0a24" />
+        </view>
+        <view class="tick" wx:if="{{one_row[lastColIndex].takeleave}}">
+          <van-icon name="cross"/>
         </view>
       </view>
     </view>
@@ -63,6 +69,9 @@
         <view class="tick" wx:if="{{each.course_left===0}}">
           <van-icon name="fail" color="#ee0a24" />
         </view>
+        <view class="tick" wx:if="{{each.takeleave}}">
+          <van-icon name="cross"/>
+        </view>
       </view>
       <!-- 最后一列单独显示 -->
       <view class="block course_notice lastRow last_col {{selected.row === lastRowIndex && selected.col === lastColIndex ? 'active' : ''}}" bindtap="selectCell" data-row="{{lastRowIndex}}" data-col="{{lastColIndex}}">
@@ -74,6 +83,9 @@
         </view>
         <view class="tick" wx:if="{{courseTable[lastRowIndex][lastColIndex].course_left===0}}">
           <van-icon name="fail" color="#ee0a24" />
+        </view>
+        <view class="tick" wx:if="{{courseTable[lastRowIndex][lastColIndex].takeleave}}">
+          <van-icon name="cross" />
         </view>
       </view>
     </view>

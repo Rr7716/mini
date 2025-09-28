@@ -152,39 +152,48 @@ Page({
         wx.hideLoading() // 隐藏加载框
       }
     })
+    // 请求这一周的请假信息
+    wx.request({
+      url: `${utils.baseUrl}/takeleave/range`,
+      method: 'GET',
+      data: {},
+      header: {},
+      success: (res) => {
+        console.log(res.data)
+        for (let one of res.data) {
+          const targetCourse = this.data.courseTable.flat().find(course => course.id === one.course_id);
+          this.setData({
+            [`courseTable[${targetCourse.row}][${targetCourse.col}].takeleave`]: true,
+          })
+        }
+      },
+      fail: (error) => { },
+      complete: (res) => {
+      }
+    })
 
-    // 启动自动消课时
-    // this._timer = setInterval(() => {
-    //   this.AutoAdjustCourseLeft()
-    // }, 10*1000);
 
     // 建立 WebSocket 连接
     wx.connectSocket({
       url: `${utils.wssUrl}/ws`,  // 你的 FastAPI WebSocket 地址
     });
-
     // 绑定事件
     wx.onSocketOpen(() => {
       console.log('✅ WebSocket 已连接');
     });
-
     wx.onSocketMessage((res) => {
       console.log('📩 收到消息:', res.data);
 
       const updatedCourse = JSON.parse(res.data)
       const targetCourse = this.data.courseTable.flat().find(course => course.id === updatedCourse.id);
-      console.log(this.data.courseTable)
-      console.log(targetCourse)
       this.setData({
         [`courseTable[${targetCourse.row}][${targetCourse.col}].course_left`]: updatedCourse.course_left,
         [`courseTable[${targetCourse.row}][${targetCourse.col}].has_expire`]: true,
       })
     });
-
     wx.onSocketClose(() => {
       console.log('❌ WebSocket 已关闭');
     });
-
     wx.onSocketError((err) => {
       console.error('⚠️ WebSocket 出错:', err);
     });
@@ -427,6 +436,20 @@ Page({
       course.has_expire = false // 取消绿√
       course.course_left += 1 // 返还课时
       wx.request({
+        url: `${utils.baseUrl}/takeleave/`,
+        method: 'POST',
+        data: {
+          course_id: course.id,
+        },
+        header: {
+          "Content-Type": "application/json" // 一般用 application/json
+        },
+        success: (res) => { },
+        fail: (error) => { },
+        complete: (res) => {
+        }
+      })
+      wx.request({
         url: `${utils.baseUrl}/course/${course.id}`,
         method: 'PUT',
         data: course,
@@ -434,13 +457,14 @@ Page({
           "Content-Type": "application/json" // 一般用 application/json
         },
         success: (res) => {
+          course.takeleave = true
           this.setData({
             [`courseTable[${row}][${col}]`]: course,
           })
           this.UnselectedAction()
         },
         fail: (error) => {
-  
+
         },
         complete: (res) => {
           // wx.hideLoading()
