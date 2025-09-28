@@ -103,15 +103,20 @@
       <van-field label="课时费(单价)" placeholder="请输入课时费" value="{{selectedCourse.price}}" bindblur='onChangePrice' />
       <van-field label="课时费(总价)" placeholder="请输入课时费" value="{{selectedCourse.totalCost}}" readonly />
       <van-field label="剩余课时" placeholder="请输入剩余课时" value="{{selectedCourse.course_left}}" bind:change="onChangeCourseLeft" />
-      <view class="popup_btn_view">
+      <view class="popup_btn_view" wx:if="{{isCourseEmpty}}">
         <view>
           <van-button type="primary" bind:tap="onClickAdd">新增</van-button>
         </view>
+      </view>
+      <view class="popup_btn_view" wx:if="{{!isCourseEmpty}}">
         <view>
           <van-button type="info" bind:tap="onClickUpdate">修改</van-button>
         </view>
         <view>
           <van-button type="danger" bind:tap="onClickDelte">删除</van-button>
+        </view>
+        <view>
+          <van-button type="warning" bind:tap="onClickSick">请假</van-button>
         </view>
       </view>
     </view>

@@ -15,7 +15,7 @@ Page({
     selectedHeaderCol: -1, // 选中的表头列号
     selected: { row: -1, col: -1 }, // 选中的行号、列号
     selectedCourse: {},
-    footerActive: true,
+    isCourseEmpty: true,
     selectedWeekday: {
       sumPrice: 0,
       sumHours: 0,
@@ -209,7 +209,6 @@ Page({
     console.log(this.data.courseTable)
     this.setData({
       selected: { row, col },
-      footerActive: !this.fatherActive,
       selectedCourse: this.data.courseTable[row][col],
       selectedHeaderCol: -1,
       showCourseDetail: true,
@@ -223,6 +222,12 @@ Page({
           'end_time': timeRangeArr[1],
         },
         'selectedCourse.weekday': col,
+        isCourseEmpty: true,
+      })
+    }
+    else {
+      this.setData({
+        isCourseEmpty: false,
       })
     }
   },
@@ -305,6 +310,7 @@ Page({
     let course = this.data.selectedCourse
     let { row, col } = this.data.selected
     console.log(course)
+    console.log(course.id)
     if (!course.content) {
       Dialog.alert({
         message: '请输入课程名称',
@@ -313,14 +319,7 @@ Page({
       });
       return
     }
-    if (this.IsCourseExist(this.data.courseTable[row][col])) {
-      Dialog.alert({
-        message: '该时刻课程已存在, 不能新增, 只能修改',
-      }).then(() => {
-        // on close
-      });
-      return
-    }
+
     wx.request({
       url: `${utils.baseUrl}/course/`,
       method: 'POST',
@@ -351,14 +350,6 @@ Page({
   onClickUpdate(e) {
     // 空的点更新按钮无效
     let { row, col } = this.data.selected
-    if (!this.IsCourseExist(this.data.courseTable[row][col])) {
-      Dialog.alert({
-        message: '该时刻课程不存在, 请先添加',
-      }).then(() => {
-        // on close
-      });
-      return
-    }
     let course = this.data.selectedCourse
     console.log(course)
 
@@ -380,21 +371,12 @@ Page({
       },
       complete: (res) => {
         // wx.hideLoading()
-        Toast.success('删除成功');
+        Toast.success('修改成功');
       }
     })
   },
   onClickDelte(e) {
-    // 空的点删除按钮无效
     let { row, col } = this.data.selected
-    if (!this.IsCourseExist(this.data.courseTable[row][col])) {
-      Dialog.alert({
-        message: '该时刻课程不存在, 请先添加',
-      }).then(() => {
-        // on close
-      });
-      return
-    }
     let course = this.data.selectedCourse
     console.log(course)
     Dialog.confirm({
@@ -431,6 +413,41 @@ Page({
       .catch(() => {
         // on cancel
       });
+  },
+  onClickSick(e) {
+    let { row, col } = this.data.selected
+    let course = this.data.selectedCourse
+    console.log(course)
+    if (course.has_expire) {
+      Dialog.confirm({
+        title: '请假',
+        message: `「${utils.weekday[course.weekday]}${course.timeRange} ${course.content}」该课程的课时已消, 若请假则会返还课时, 确定要这样操作吗`,
+      })
+      course.last_expire_time = course.expire_time // 改了后在下次OnLoad的时候has_expire就不会为true了
+      course.has_expire = false // 取消绿√
+      course.course_left += 1 // 返还课时
+      wx.request({
+        url: `${utils.baseUrl}/course/${course.id}`,
+        method: 'PUT',
+        data: course,
+        header: {
+          "Content-Type": "application/json" // 一般用 application/json
+        },
+        success: (res) => {
+          this.setData({
+            [`courseTable[${row}][${col}]`]: course,
+          })
+          this.UnselectedAction()
+        },
+        fail: (error) => {
+  
+        },
+        complete: (res) => {
+          // wx.hideLoading()
+          Toast.success('请假成功');
+        }
+      })
+    }
   },
 
   // 更新输入框value
@@ -469,32 +486,7 @@ Page({
     return course !== ''
   },
 
-  AutoAdjustCourseLeft() {
-    const clock = this.selectComponent("#clock");
-    const nowStr = clock.data.now
-    console.log("当前时间:", nowStr);
-    const weekday = new Date().getDay();
-    let allCourses = []
-    this.data.courseTable.forEach((rowArr, rowNum) => {
-      rowArr.forEach((course, colNum) => {
-        if (colNum !== 0 && this.IsCourseExist(course)) {
-          allCourses = [...allCourses, course]
-        }
-      })
-    })
-    let todayCourses = allCourses.filter((course) => course.weekday === weekday)
-    todayCourses.forEach((course) => {
-      let row = course.row
-      let col = course.col
-      console.log(course)
-      if (this.IsExpire(nowStr, course)) {
-        this.setData()
-      }
-    })
-  },
-  IsExpire(nowStr, course) {
-    return true
-  },
+
   // 发送消息给 FastAPI
   sendMessage() {
     if (this.data.socketOpen) {
