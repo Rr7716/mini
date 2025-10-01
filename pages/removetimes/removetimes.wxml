@@ -1,0 +1,102 @@
+<view class="course_container">
+  <view class="course_top">
+    <view>
+      <van-button type="primary" bind:tap="onClickAddBtn" round>新增</van-button>
+    </view>
+  </view>
+  <view class="course_main">
+    <!-- 显示表头 -->
+    <view class="header">
+      <view class="block {{selectedHeaderCol === col_num ? 'active' : ''}}" wx:for-index='col_num' wx:for-item='each' wx:if="{{col_num!=lastColIndex}}" wx:for="{{headers}}" data-col="{{col_num}}">
+        {{each}}
+      </view>
+      <!-- 最后一列单独显示 -->
+      <view class="block last_col {{selectedHeaderCol === lastColIndex ? 'active' : ''}}" bindtap="selectHeaderCol" data-col="{{lastColIndex}}">
+        {{headers[lastColIndex]}}
+      </view>
+    </view>
+    <!-- 显示信息 -->
+    <view class="header" wx:for-index='rowIndex' wx:for-item='one_row' wx:for="{{removetimesData}}" wx:if="{{rowIndex!=lastRowIndex}}">
+      <!-- 第一列 -->
+      <view class="block {{selectedStudent.index === rowIndex ? 'active' : ''}}" bindtap="selectCell" data-index="{{rowIndex}}">
+        {{rowIndex}}
+      </view>
+      <view class="block {{selectedStudent.index === rowIndex ? 'active' : ''}}" bindtap="selectCell" data-index="{{rowIndex}}">
+        {{one_row.content}}
+      </view>
+      <view class="block {{selectedStudent.index === rowIndex ? 'active' : ''}}" bindtap="selectCell" data-index="{{rowIndex}}">
+        {{one_row.time}}
+      </view>
+      <view class="block {{selectedStudent.index === rowIndex ? 'active' : ''}}" bindtap="selectCell" data-index="{{rowIndex}}">
+        {{one_row.students}}
+      </view>
+      <view class="block {{selectedStudent.index === rowIndex ? 'active' : ''}}" bindtap="selectCell" data-index="{{rowIndex}}">
+        {{one_row.course_left}}
+      </view>
+      <view class="block last_col {{selectedStudent.index === rowIndex ? 'active' : ''}}" bindtap="selectCell" data-index="{{rowIndex}}">
+        {{one_row.create_time}}
+      </view>
+    </view>
+    <!-- 最后一行单独显示 -->
+    <view class="header">
+      <view class="block lastRow {{selectedStudent.index === lastRowIndex ? 'active' : ''}}" bindtap="selectCell" data-index="{{lastRowIndex}}">
+        {{removetimesData[lastRowIndex].index}}
+      </view>
+      <view class="block lastRow {{selectedStudent.index === lastRowIndex ? 'active' : ''}}" bindtap="selectCell" data-index="{{lastRowIndex}}">
+        {{removetimesData[lastRowIndex].content}}
+      </view>
+      <view class="block lastRow {{selectedStudent.index === lastRowIndex ? 'active' : ''}}" bindtap="selectCell" data-index="{{lastRowIndex}}">
+        {{removetimesData[lastRowIndex].time}}
+      </view>
+      <view class="block lastRow {{selectedStudent.index === lastRowIndex ? 'active' : ''}}" bindtap="selectCell" data-index="{{lastRowIndex}}">
+        {{removetimesData[lastRowIndex].students}}
+      </view>
+      <view class="block lastRow {{selectedStudent.index === lastRowIndex ? 'active' : ''}}" bindtap="selectCell" data-index="{{lastRowIndex}}">
+        {{removetimesData[lastRowIndex].course_left}}
+      </view>
+      <view class="block lastRow last_col {{selectedStudent.index === lastRowIndex ? 'active' : ''}}" bindtap="selectCell" data-index="{{lastRowIndex}}">
+        {{removetimesData[lastRowIndex].create_time}}
+      </view>
+    </view>
+  </view>
+
+  <van-popup closeable close-icon="close" show="{{ showStudentDetail }}" position="bottom" custom-style="height: 40%;" bind:close="onCloseStudentDetail">
+    <view style="padding: 40rpx;">
+      <van-field label="英文名" placeholder="请输入英文名" value="{{selectedStudent.en_name}}" bind:change="onChangeEnName" />
+      <van-field label="中文名" placeholder="请输入中文名" value="{{selectedStudent.cn_name}}" bind:change="onChangeCnName" />
+      <view class="gender_view">
+        <van-radio-group direction='horizontal' value="{{ selectedStudent.gender }}" bind:change="onChangeGender">
+          <view class="gender_title">请选择性别</view>
+          <van-radio name="boy">男</van-radio>
+          <van-radio name="girl">女</van-radio>
+        </van-radio-group>
+      </view>
+      <van-field label="年龄" placeholder="请输入年龄" value="{{selectedStudent.age}}" bind:change="onChangeAge" />
+      <van-field label="年级" placeholder="请输入年级" value="{{selectedStudent.grade}}" bind:change="onChangeGrade" />
+      <view class="popup_btn_view"  wx:if="{{selectedStudent.id == '0'}}">
+        <view>
+          <van-button type="primary" bind:tap="onClickSave">保存</van-button>
+        </view>
+      </view>
+      <view class="popup_btn_view" wx:if="{{selectedStudent.id != '0'}}">
+        <view>
+          <van-button type="info" bind:tap="onClickUpdate" >修改</van-button>
+        </view>
+        <view>
+          <van-button type="danger" bind:tap="onClickDelete">删除</van-button>
+        </view>
+      </view>
+    </view>
+    <van-popup closeable show="{{ showStudentPicker }}" custom-style="height: 75%; width: 90%;" bind:close="onCloseStudents" round>
+      <van-picker columns="{{ studentsOptions }}" bind:change="onStudentPickerChange" />
+    </van-popup>
+
+    <van-popup closeable show="{{ showCoursePicker }}" custom-style="height: 30%; width: 90%;" bind:close="onCloseCoursePicker" round>
+      <van-picker columns="{{ courseOptions.values }}" bind:change="onCoursePickerChange" />
+    </van-popup>
+
+    <van-toast id="van-toast" />
+    <van-dialog id="van-dialog" />
+    <van-notify id="van-notify" />
+  </van-popup>
+</view>

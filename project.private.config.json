@@ -3,6 +3,13 @@
     "miniprogram": {
       "list": [
         {
+          "name": "pages/removetimes/removetimes",
+          "pathName": "pages/removetimes/removetimes",
+          "query": "",
+          "scene": null,
+          "launchMode": "default"
+        },
+        {
           "name": "pages/student/student",
           "pathName": "pages/student/student",
           "query": "",

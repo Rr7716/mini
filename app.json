@@ -17,7 +17,7 @@
   },
   "pages": [
     "pages/index/index",
-    "pages/fee/fee",
+    "pages/removetimes/removetimes",
     "pages/course/course",
     "pages/student/student"
   ],
@@ -36,8 +36,8 @@
         "selectedIconPath": "images/home2.png"
       },
       {
-        "pagePath": "pages/fee/fee",
-        "text": "课时费",
+        "pagePath": "pages/removetimes/removetimes",
+        "text": "消课时",
         "iconPath": "images/fee.png",
         "selectedIconPath": "images/fee2.png"
       },
