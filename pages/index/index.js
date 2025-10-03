@@ -43,6 +43,8 @@ Page({
     },
     socketOpen: false,
     messages: [],
+    weekOptions: [],
+    selectedWeek: 0,
   },
 
   onLoad(options) {
@@ -197,7 +199,19 @@ Page({
     wx.onSocketError((err) => {
       console.error('⚠️ WebSocket 出错:', err);
     });
+
+    // 周
+    const yearWeekNums = utils.getWeeksInYear()
+    let weekOptions = Array.from({ length: yearWeekNums }, (_, i) => ({
+      text: `第${i + 1}周`,
+      value: i + 1,
+    }));
+    this.setData({
+      selectedWeek: utils.getWeekNumber(),
+      weekOptions,
+    })
   },
+
   selectHeaderCol(e) {
     const selectedHeaderCol = e.currentTarget.dataset.col
     if (selectedHeaderCol === 0) return // 第一列为空, 不用管
@@ -315,6 +329,7 @@ Page({
       selectedCourse,
     })
   },
+  
   onClickAdd(e) {
     let course = this.data.selectedCourse
     let { row, col } = this.data.selected

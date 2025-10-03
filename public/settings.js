@@ -120,6 +120,27 @@ function getWeekRange(date = new Date()) {
   return { monday, sunday };
 }
 
+function getWeeksInYear(year = new Date().getFullYear()) {
+  // 先找该年的最后一天
+  let d = new Date(Date.UTC(year, 11, 31));
+
+  // 往前找，直到找到星期四
+  while (d.getUTCDay() !== 4) {
+    d.setUTCDate(d.getUTCDate() - 1);
+  }
+
+  // 这一天所在的周就是该年的最后一周
+  return getWeekNumber(d);
+}
+
+function getWeekNumber(date = new Date()) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  return weekNo;
+}
+
 
 module.exports = {
   StudentMaxNumber,
@@ -133,4 +154,6 @@ module.exports = {
   wssUrl,
   getWeekRange,
   GenderDic,
+  getWeekNumber,
+  getWeeksInYear,
 }

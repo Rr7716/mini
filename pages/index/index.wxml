@@ -5,6 +5,11 @@
     </view>
   </view>
   <view class="course_main">
+    <view>
+      <van-dropdown-menu>
+        <van-dropdown-item value="{{ selectedWeek }}" options="{{ weekOptions }}" />
+      </van-dropdown-menu>
+    </view>
     <!-- 显示周一到周日 -->
     <view class="header">
       <view class="block {{selectedHeaderCol === col_num ? 'active' : ''}}" wx:for-index='col_num' wx:for-item='each' wx:if="{{col_num!=lastColIndex}}" wx:for="{{headers}}" bindtap="selectHeaderCol" data-col="{{col_num}}">
@@ -48,7 +53,7 @@
           <van-icon name="fail" color="#ee0a24" />
         </view>
         <view class="tick" wx:if="{{one_row[lastColIndex].takeleave}}">
-          <van-icon name="cross"/>
+          <van-icon name="cross" />
         </view>
       </view>
     </view>
@@ -70,7 +75,7 @@
           <van-icon name="fail" color="#ee0a24" />
         </view>
         <view class="tick" wx:if="{{each.takeleave}}">
-          <van-icon name="cross"/>
+          <van-icon name="cross" />
         </view>
       </view>
       <!-- 最后一列单独显示 -->
@@ -139,6 +144,7 @@
     <van-popup closeable show="{{ showCoursePicker }}" custom-style="height: 30%; width: 90%;" bind:close="onCloseCoursePicker" round>
       <van-picker columns="{{ courseOptions.values }}" bind:change="onCoursePickerChange" />
     </van-popup>
+
 
     <van-toast id="van-toast" />
     <van-dialog id="van-dialog" />
