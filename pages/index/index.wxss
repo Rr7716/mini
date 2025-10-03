@@ -5,8 +5,10 @@
   flex-direction: column;
 }
 .course_top {
-  height: 180rpx;
-  width: 100vw;
+  margin-top: 120rpx;
+  display: flex;
+  margin-left: 20rpx;
+  align-items: center;
 }
 .course_main {
   flex: 1;
@@ -73,15 +75,15 @@
 }
 
 .time_view {
+  height: 50rpx;
   width: 230rpx;
   padding: 5rpx;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left: 20rpx;
-  margin-top: 120rpx;
   background-color: rgb(253, 243, 146);
   border-radius: 20rpx;
+  margin-right: 30rpx;
 }
 
 .course_notice {

@@ -50,6 +50,18 @@ Page({
   onLoad(options) {
     const { monday, sunday } = utils.getWeekRange(new Date());
     console.log(`${monday}    ${sunday}`)
+    
+    // 周
+    const yearWeekNums = utils.getWeeksInYear()
+    let weekOptions = Array.from({ length: yearWeekNums }, (_, i) => ({
+      text: `第${i + 1}周`,
+      value: i + 1,
+    }));
+    this.setData({
+      selectedWeek: utils.getWeekNumber(),
+      weekOptions,
+    })
+    
     wx.showLoading({
       title: '加载中...',
       mask: true // 不能再点击请求按钮, 防止请求多次
@@ -75,7 +87,7 @@ Page({
     })
     // 请求课程内容
     wx.request({
-      url: `${utils.baseUrl}/course/`,
+      url: `${utils.baseUrl}/course/${this.data.selectedWeek}`,
       method: 'GET',
       data: {},
       header: {},
@@ -199,17 +211,6 @@ Page({
     wx.onSocketError((err) => {
       console.error('⚠️ WebSocket 出错:', err);
     });
-
-    // 周
-    const yearWeekNums = utils.getWeeksInYear()
-    let weekOptions = Array.from({ length: yearWeekNums }, (_, i) => ({
-      text: `第${i + 1}周`,
-      value: i + 1,
-    }));
-    this.setData({
-      selectedWeek: utils.getWeekNumber(),
-      weekOptions,
-    })
   },
 
   selectHeaderCol(e) {

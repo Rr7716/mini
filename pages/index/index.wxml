@@ -3,6 +3,9 @@
     <view class="time_view">
       <time-display id='clock' />
     </view>
+    <view>
+      <van-button type="danger" bind:tap="onClickClear" round>一键清除</van-button>
+    </view>
   </view>
   <view class="course_main">
     <view>
