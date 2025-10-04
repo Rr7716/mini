@@ -8,7 +8,7 @@ Page({
   data: {
     headers: ['  ', '周一', '周二', '周三', '周四', '周五', '周六', '周日',],
     // ['07:00-08:00', '', '', '', '', '', '', '']
-    // 二维数组, 展示课表, 行号为course的weekday
+    // 二维数组, 展示课表, 行号为course的weekday, 第一列都展示时间段
     courseTable: [],
     lastRowIndex: 0,
     lastColIndex: 7,
@@ -39,7 +39,6 @@ Page({
     showCoursePicker: false,
     courseOptions: { // values为复制课程的下拉框源数据, src为字典, key为课程id, value为课程对象
       'values': [], // 课程名
-      'nameDic': {}, // key为课程名, value为课程对象
     },
     socketOpen: false,
     messages: [],
@@ -50,7 +49,7 @@ Page({
   onLoad(options) {
     const { monday, sunday } = utils.getWeekRange(new Date());
     console.log(`${monday}    ${sunday}`)
-    
+
     // 周
     const yearWeekNums = utils.getWeeksInYear()
     let weekOptions = Array.from({ length: yearWeekNums }, (_, i) => ({
@@ -61,11 +60,7 @@ Page({
       selectedWeek: utils.getWeekNumber(),
       weekOptions,
     })
-    
-    wx.showLoading({
-      title: '加载中...',
-      mask: true // 不能再点击请求按钮, 防止请求多次
-    })
+
     let courseTable = {} // key为时间段, value为['07:00-08:00', '', '', '', '', '', '', '']
     // 请求课程时间
     wx.request({
@@ -93,8 +88,6 @@ Page({
       header: {},
       success: (res) => {
         console.log(res.data)
-        let courseNamesArr = ['无']
-        let courseDic = {}
         for (let course of res.data) {
           // 检查消课情况
           let target = new Date(course.last_expire_time);
@@ -106,7 +99,6 @@ Page({
           course.hours = utils.TimeStrToHour(course.timeRange)
           // 在字典里通过时间段找到对应的课程数组, 再通过星期几找到对应的课程对象
           courseTable[timerange][course.weekday] = course
-          courseNamesArr = [...courseNamesArr, course.content]
         }
         courseTable = Object.values(courseTable) // 字典转数组, 不要key了
         console.log(utils.sortTimeRanges(courseTable)) // 按照时间段排序
@@ -116,17 +108,12 @@ Page({
             if (colNum !== 0 && this.IsCourseExist(course)) {
               course.row = rowNum
               course.col = colNum
-              courseDic[course.content] = course
             }
           })
         })
         this.setData({
           courseTable,
           lastRowIndex: courseTable.length - 1,
-          courseOptions: {
-            values: courseNamesArr,
-            nameDic: courseDic,
-          }
         })
         console.log(courseTable)
       },
@@ -163,7 +150,6 @@ Page({
       fail: (error) => {
       },
       complete: (res) => {
-        wx.hideLoading() // 隐藏加载框
       }
     })
     // 请求这一周的请假信息
@@ -260,8 +246,15 @@ Page({
     this.UnselectedAction()
   },
   onClickExistCourse(e) {
+    let values = this.data.courseTable.flat().filter((one) => typeof one === 'object').map((course) => course.content);
+    values = ['无', ...values]
+    values = [...new Set(values)];
+    console.log(values)
     this.setData({
       showCoursePicker: true,
+      courseOptions: {
+        values,
+      }
     })
   },
   onCloseCoursePicker(e) {
@@ -321,7 +314,7 @@ Page({
   onCoursePickerChange(e) {
     // 因为这里是从nameDic里取的, 修改了对象的值, 但最后没有对nameDic进行setData, 所以直接复制并不会改变nameDic中的对象
     const content = e.detail.value
-    let selectedCourse = this.data.courseOptions.nameDic[content]
+    let selectedCourse = this.data.courseTable.flat().find((one) => one.content == content)
     selectedCourse.course_time = this.data.selectedCourse.course_time
     selectedCourse.weekday = this.data.selectedCourse.weekday
     selectedCourse.has_expire = false
@@ -330,7 +323,7 @@ Page({
       selectedCourse,
     })
   },
-  
+
   onClickAdd(e) {
     let course = this.data.selectedCourse
     let { row, col } = this.data.selected
@@ -395,7 +388,6 @@ Page({
 
       },
       complete: (res) => {
-        // wx.hideLoading()
         Toast.success('修改成功');
       }
     })
@@ -409,11 +401,6 @@ Page({
       message: `确认要删除「${utils.weekday[course.weekday]}${course.timeRange} ${course.content}」课程吗`,
     })
       .then(() => {
-        // on confirm
-        // wx.showLoading({
-        //   title: '加载中...',
-        //   mask: true // 不能再点击请求按钮, 防止请求多次
-        // })
         wx.request({
           url: `${utils.baseUrl}/course/${course.id}`,
           method: 'DELETE',
@@ -430,7 +417,6 @@ Page({
 
           },
           complete: (res) => {
-            // wx.hideLoading()
             Toast.success('删除成功');
           }
         })
@@ -483,11 +469,34 @@ Page({
 
         },
         complete: (res) => {
-          // wx.hideLoading()
           Toast.success('请假成功');
         }
       })
     }
+  },
+  onClickClear(e) {
+    const week = this.data.selectedWeek
+    // Dialog.confirm({
+    //   show: true,
+    //   title: `一键清除第${week}周课程`,
+    //   message: `确认要一键清除第${week}周的所有课程吗`,
+    // })
+    //   .then(() => {
+    //   })
+    //   .catch(() => {
+    //   });
+    let courseTable = this.data.courseTable
+    courseTable.forEach((one_row, row_num) => {
+      one_row.forEach((one, col_num) => {
+        if (col_num !== 0 && typeof one === 'object') {
+          courseTable[row_num][col_num] = ''
+        }
+      })
+    })
+    this.setData({
+      courseTable,
+      courseOptions: [],
+    })
   },
 
   // 更新输入框value
