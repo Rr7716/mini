@@ -115,7 +115,7 @@
 
   <van-popup closeable close-icon="close" show="{{ showCourseDetail }}" position="bottom" custom-style="height: 60%;" bind:close="onCloseCourseDetail">
     <view style="padding: 40rpx;">
-      <van-field label="选择现有课程" placeholder="请选择现有课程" value="{{selectedCourse.content}}" bind:tap="onClickExistCourse" readonly />
+      <van-field label="选择现有课程" placeholder="请选择现有课程" value="{{selectedContent}}" bind:tap="onClickExistCourse" readonly />
       <van-field label="课程名称" placeholder="请输入课程名称" value="{{selectedCourse.content}}" bind:change="onChangeContent" />
       <van-field label="人数" placeholder="0" value="{{selectedCourse.students.length}}" readonly />
       <van-field label="学生" placeholder="请选择学生" value="{{selectedCourse.studentNames}}" bind:tap="onClickStudents" readonly />

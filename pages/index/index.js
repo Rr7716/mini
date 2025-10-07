@@ -36,10 +36,12 @@ Page({
     ]
     */
     studentsOptions: [], // picker的源数据
+    selectedContent: '', // 选择现有课程
     showCoursePicker: false,
     courseOptions: { // values为复制课程的下拉框源数据, src为字典, key为课程id, value为课程对象
       'values': [], // 课程名
     },
+    chooseExist: false, // 如果选择复制现有课程, 该值则被赋为true
     socketOpen: false,
     messages: [],
     weekOptions: [],
@@ -244,6 +246,9 @@ Page({
 
   onCloseCourseDetail(e) {
     this.UnselectedAction()
+    this.setData({
+      selectedContent: '',
+    })
   },
   onClickExistCourse(e) {
     let values = this.data.courseTable.flat().filter((one) => typeof one === 'object').map((course) => course.content);
@@ -254,7 +259,7 @@ Page({
       showCoursePicker: true,
       courseOptions: {
         values,
-      }
+      },
     })
   },
   onCloseCoursePicker(e) {
@@ -313,14 +318,16 @@ Page({
   },
   onCoursePickerChange(e) {
     // 因为这里是从nameDic里取的, 修改了对象的值, 但最后没有对nameDic进行setData, 所以直接复制并不会改变nameDic中的对象
-    const content = e.detail.value
-    let selectedCourse = this.data.courseTable.flat().find((one) => one.content == content)
+    const selectedContent = e.detail.value
+    let selectedCourse = this.data.courseTable.flat().find((one) => one.content == selectedContent)
     selectedCourse.course_time = this.data.selectedCourse.course_time
     selectedCourse.weekday = this.data.selectedCourse.weekday
     selectedCourse.has_expire = false
     selectedCourse.course_left = 0 // 需要重新输入剩余课时
     this.setData({
+      selectedContent,
       selectedCourse,
+      chooseExist: e.detail.value === '无',
     })
   },
 
@@ -332,6 +339,14 @@ Page({
     if (!course.content) {
       Dialog.alert({
         message: '请输入课程名称',
+      }).then(() => {
+        // on close
+      });
+      return
+    }
+    if (!this.data.chooseExist && this.data.courseTable.flat().some(one => typeof one === 'object' && one.content === course.content)) {
+      Dialog.alert({
+        message: '课程名称重复, 请重新输入',
       }).then(() => {
         // on close
       });
